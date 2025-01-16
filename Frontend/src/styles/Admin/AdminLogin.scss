@@ -1,0 +1,30 @@
+.admin-login {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background-color: yellow;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.5rem;
+  color: black;
+  min-height: 100vh;
+  min-width: 100vw;
+};
+
+.admin-login__Form {
+  display: flex;
+  flex-direction: column;
+  padding-top: 1rem;
+}
+
+.admin-login__Login {
+  display: flex;
+  flex-direction: column;
+  background-color: whitesmoke;
+  color: blue;
+  border: 1px solid gray;
+  width: 10rem;
+  &:hover {
+    background-color: blue;
+    color: whitesmoke
+  }
+}
