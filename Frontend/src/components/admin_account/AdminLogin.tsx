@@ -1,53 +1,55 @@
 /** Admin login page */
-import { useState} from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/Admin/AdminLogin.scss';
 
 const AdminLogin = () => {
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    if (username === 'admin' && password === 'admin') {
-      alert('Welcome Admin!');
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Example login logic (replace with actual logic)
+    if (username === 'admin' && password === 'pass') {
+      // Successful login: navigate to dashboard
+      navigate('/dashboard');
     } else {
-      alert('Invalid Username or Password');
+      // Show error if login fails
+      setError('Invalid credentials.');
     }
   };
 
   return (
     <div className="admin-login">
-      This is Admin Login Page!
+      <h2>This is Admin Login Page!</h2>
       <form onSubmit={handleLogin}>
-        <div className='admin-login__Form'>
+        <div className='admin-login__form'>
           <label htmlFor='username'>Username:
             <input
-              type='username'
+              type='text'
               id='username'
               placeholder='username@domain'
               value={username}
-              onChange={(event) => {setUsername(event.target.value)}}>
-            </input>
+              onChange={(e) => setUsername(e.target.value)}
+            />
           </label>
-
           <label htmlFor='password'>Password:
             <input
               type='password'
               id='password'
               placeholder='password'
               value={password}
-              onChange={(event)=> setPassword(event.target.value)}
-              required >
-            </input>
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </label>
-
-          <input 
-            className='admin-login__Login'
-            type='submit'
-            value='Click to Login'></input>
+          <button type='submit'>Login</button>
         </div>
+        {error && <p className="error">{error}</p>}
       </form>
-      
-      
     </div>
   );
 }
