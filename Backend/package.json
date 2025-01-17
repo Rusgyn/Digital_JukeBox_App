@@ -16,11 +16,13 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.21.2",
+    "pg": "^8.13.1",
     "sass": "^1.83.4"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.6",
+    "@types/pg": "^8.11.10",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
