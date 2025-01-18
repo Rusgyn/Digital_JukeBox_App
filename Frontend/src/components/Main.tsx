@@ -14,7 +14,7 @@ const Main = () => {
         <button className='main__dashboard_button'
           type='button'
           value="Dashboard"
-          onClick={handleDashboardNavigation}>Main</button>
+          onClick={handleDashboardNavigation}>Dashboard</button>
       </div>
     </div>
   )
