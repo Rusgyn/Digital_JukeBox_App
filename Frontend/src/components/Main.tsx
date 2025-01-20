@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import '../styles/Main.scss';
 
 const Main = () => {
   const navigate = useNavigate();
@@ -9,10 +10,12 @@ const Main = () => {
   return (
     <div className='main'>
       <h2> This is Main Component </h2>
-      <button className='main__dashboard-button'
-        type='button'
-        value="Dashboard"
-        onClick={handleDashboardNavigation}></button>
+      <div className='main__content'>
+        <button className='main__dashboard_button'
+          type='button'
+          value="Dashboard"
+          onClick={handleDashboardNavigation}>Dashboard</button>
+      </div>
     </div>
   )
 };
