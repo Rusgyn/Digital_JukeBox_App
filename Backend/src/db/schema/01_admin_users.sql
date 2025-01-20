@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS admin_users CASCADE;
+
+CREATE TABLE admin_users (
+  id SERIAL PRIMARY KEY NOT NULL,
+  first_name VARCHAR(50) NOT NULL,
+  last_name VARCHAR(50) NOT NULL,
+  email VARCHAR(255) unique NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role_id INTEGER REFERENCES roles(id) ON DELETE CASCADE
+);
