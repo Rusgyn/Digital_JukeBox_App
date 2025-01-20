@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS admin_roles CASCADE;
+
+CREATE TABLE admin_roles (
+  id SERIAL PRIMARY KEY NOT NULL,
+  role_name VARCHAR(50) NOT NULL
+)
