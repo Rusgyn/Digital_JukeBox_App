@@ -9,6 +9,14 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  const handleMainNavigation = () => {
+    navigate('/');
+  };
+
+  const handleDashboardNavigation = () => {
+    navigate('/dashboard');
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -50,6 +58,11 @@ const AdminLogin = () => {
         </div>
         {error && <p className="error">{error}</p>}
       </form>
+
+
+      <button type='button' onClick={handleDashboardNavigation}>Dashboard</button>
+      <button type='button' onClick={handleMainNavigation}>Main</button>
+
     </div>
   );
 }
