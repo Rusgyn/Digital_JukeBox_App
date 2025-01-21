@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.21.2",
     "pg": "^8.13.1",
     "sass": "^1.83.4"
