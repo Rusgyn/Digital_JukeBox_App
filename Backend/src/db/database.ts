@@ -1,6 +1,6 @@
-import { Client } from "pg";
+import { Pool } from "pg";
 
-const client = new Client({
+const db = new Pool({
   host: process.env.PGHOST,
   database: process.env.PGDATABASE,
   user: process.env.PGUSER,
@@ -9,7 +9,7 @@ const client = new Client({
   ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
 });
 
-client
+db
   .connect()
   .catch((e: unknown) =>  {
     if (e instanceof Error) {
@@ -19,4 +19,4 @@ client
     }
   });
 
-export default client;  // Use `export` instead of `module.exports`
+export default db;
