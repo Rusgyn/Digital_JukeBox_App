@@ -15,7 +15,7 @@ export default defineConfig({
         target: 'http://localhost:3001', // Backend URL. PORT: 3001
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '') // Optionally remove /api prefix
+        rewrite: (path) => path.replace(/^\/api/, '') // Optionally remove /api prefix. This is useful when the backend server does not expect the /api prefix in the URL. '/api/songs' will be rewritten as /songs before being forwarded to the backend server.
       }, 
     },
   },
