@@ -5,7 +5,10 @@ import react from '@vitejs/plugin-react-swc';
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: '0.0.0.0', // This allow external access
+    host: '0.0.0.0', // This allow external access, This is useful for testing on different devices within the same network or for allowing others on the same network to access your development server.
+    // - `http://localhost:5173`
+    // - `http://127.0.0.1:5173`
+    // - `http://192.168.1.100:5173`
     port: 5173, // Frontend PORT
     proxy: {
       '/api': { // /api: All requests starting with /api in Frontend will be proxied to the Backend server (http://localhost:3001). Ex: /api/songs, the Vite proxy will forward the request to http://localhost:3001/api/songs 
