@@ -11,11 +11,11 @@ export default defineConfig({
     // - `http://192.168.1.100:5173`
     port: 5173, // Frontend PORT
     proxy: {
-      '/api': { // /api: All requests starting with /api in Frontend will be proxied to the Backend server (http://localhost:3001). Ex: /api/songs, the Vite proxy will forward the request to http://localhost:3001/api/songs 
+      '/jukeBox': { // /jukeBox: All requests starting with /jukeBox in Frontend will be proxied to the Backend server (http://localhost:3001). Ex: /jukeBox/songs, the Vite proxy will forward the request to http://localhost:3001/jukeBox/songs 
         target: 'http://localhost:3001', // Backend URL. PORT: 3001
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '') // Optionally remove /api prefix. This is useful when the backend server does not expect the /api prefix in the URL. '/api/songs' will be rewritten as /songs before being forwarded to the backend server.
+        rewrite: (path) => path.replace(/^\/jukeBox/, '') // Optionally remove /jukeBox prefix. This is useful when the backend server does not expect the /jukeBox prefix in the URL. '/jukeBox/songs' will be rewritten as /songs before being forwarded to the backend server.
       }, 
     },
   },
