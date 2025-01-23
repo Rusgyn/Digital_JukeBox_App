@@ -25,7 +25,7 @@ const getAllAdminUsers = async (): Promise<AdminUser[]> => {
 };
 
 // Get admin user by email
-const getAdminUserByEmail = async (email: string): Promise<AdminUser> => {
+const getAdminUserByEmail = async(email: string): Promise<AdminUser> => {
   try {
     const result = await db.query('SELECT * FROM admin_users WHERE email = $1;', [email.toLowerCase()]);
     return result.rows[0] as AdminUser;
