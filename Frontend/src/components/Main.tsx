@@ -7,13 +7,13 @@ const Main = () => {
   const navigate = useNavigate();
   const [data, setData] = useState('');
 
-  const handleDashboardNavigation = () => {
-    navigate('/dashboard');
+  const handleLoginNavigation = () => {
+    navigate('/admin-login');
   };
 
   useEffect(() => {
     // Test the backend connection
-    axios.get('/api')
+    axios.get('/jukeBox')
       .then((response) => setData(response.data))
       .catch((error) => console.error('Error fetching data: ', error)); 
   }, []);
@@ -26,7 +26,7 @@ const Main = () => {
         <button className='main__dashboard_button'
           type='button'
           value="Dashboard"
-          onClick={handleDashboardNavigation}>Dashboard</button>
+          onClick={handleLoginNavigation}>Login</button>
       </div>
     </div>
   )

@@ -7,7 +7,7 @@ interface AdminUser {
   first_name: string;
   last_name: string;
   email: string;
-  password: string;
+  password_digest: string;
   created_at: Date;
   updated_at: Date;
   admin_role_id: number
@@ -25,7 +25,7 @@ const getAllAdminUsers = async (): Promise<AdminUser[]> => {
 };
 
 // Get admin user by email
-const getAdminUserByEmail = async (email: string): Promise<AdminUser> => {
+const getAdminUserByEmail = async(email: string): Promise<AdminUser> => {
   try {
     const result = await db.query('SELECT * FROM admin_users WHERE email = $1;', [email.toLowerCase()]);
     return result.rows[0] as AdminUser;
@@ -38,8 +38,8 @@ const getAdminUserByEmail = async (email: string): Promise<AdminUser> => {
 // Add new admin user
 const addAdminUser = async (adminUser: AdminUser): Promise<AdminUser> => {
   try {
-    const hashedPassword = await bcrypt.hash(adminUser.password, 10);
-    const queryString = 'INSERT INTO admin_users (first_name, last_name, email, password, admin_role_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;';
+    const hashedPassword = await bcrypt.hash(adminUser.password_digest, 10);
+    const queryString = 'INSERT INTO admin_users (first_name, last_name, email, password_digest, admin_role_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;';
 
     const result = await db.query(queryString, [adminUser.first_name, adminUser.last_name, adminUser.email.toLowerCase(), hashedPassword, adminUser.admin_role_id]);
     return result.rows[0] as AdminUser;
@@ -64,7 +64,7 @@ const updateAdminUserProfile = async (adminUser: AdminUser): Promise<AdminUser> 
 //Update admin user password
 const updateAdminUserPassword = async (adminUser: AdminUser): Promise<AdminUser> => {
   try {
-    const hashedPassword = await bcrypt.hash(adminUser.password, 10);
+    const hashedPassword = await bcrypt.hash(adminUser.password_digest, 10);
     const queryString = 'UPDATE admin_users SET password = $1 WHERE id = $2 RETURNING *;';
     const result = await db.query(queryString, [hashedPassword, adminUser.id]);
     return result.rows[0] as AdminUser;

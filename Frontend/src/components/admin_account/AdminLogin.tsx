@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/Admin/AdminLogin.scss';
+import axios from 'axios';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -13,21 +14,36 @@ const AdminLogin = () => {
     navigate('/');
   };
 
-  const handleDashboardNavigation = () => {
-    navigate('/dashboard');
-  };
+  // const handleDashboardNavigation = () => {
+  //   navigate('/dashboard');
+  // };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+   
+    console.log('The Login Request:', { email: username, password });
 
-    // Example login logic (replace with actual logic)
-    if (username === 'admin' && password === 'pass') {
-      // Successful login: navigate to dashboard
-      navigate('/dashboard');
-    } else {
-      // Show error if login fails
-      setError('Invalid credentials.');
+    try {
+      const response = await axios.post('/jukeBox/admin-login', 
+        {
+          email: username,
+          password
+        } 
+      );
+
+      console.log("Response is: ", response);
+
+      if (response.status === 200) {
+        navigate('/dashboard');
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.error) {
+        setError(error.response.data.error);
+      } else {
+        setError('An error occurred. Please try again.');
+      }
     }
+
   };
 
   return (
@@ -35,7 +51,8 @@ const AdminLogin = () => {
       <h2>This is Admin Login Page!</h2>
       <form onSubmit={handleLogin}>
         <div className='admin-login__form'>
-          <label htmlFor='username'>Username:
+          <label htmlFor='username'>
+            Username:
             <input
               type='text'
               id='username'
@@ -44,7 +61,8 @@ const AdminLogin = () => {
               onChange={(e) => setUsername(e.target.value)}
             />
           </label>
-          <label htmlFor='password'>Password:
+          <label htmlFor='password'>
+            Password:
             <input
               type='password'
               id='password'
@@ -58,9 +76,9 @@ const AdminLogin = () => {
         </div>
         {error && <p className="error">{error}</p>}
       </form>
-
-
-      <button type='button' onClick={handleDashboardNavigation}>Dashboard</button>
+{/* 
+      <button type='button' onClick={handleDashboardNavigation}>Dashboard</button> */}
+      
       <button type='button' onClick={handleMainNavigation}>Main</button>
 
     </div>
