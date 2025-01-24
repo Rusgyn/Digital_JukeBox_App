@@ -7,8 +7,8 @@ const Main = () => {
   const navigate = useNavigate();
   const [data, setData] = useState('');
 
-  const handleDashboardNavigation = () => {
-    navigate('/dashboard');
+  const handleLoginNavigation = () => {
+    navigate('/admin-login');
   };
 
   useEffect(() => {
@@ -26,7 +26,7 @@ const Main = () => {
         <button className='main__dashboard_button'
           type='button'
           value="Dashboard"
-          onClick={handleDashboardNavigation}>Dashboard</button>
+          onClick={handleLoginNavigation}>Login</button>
       </div>
     </div>
   )

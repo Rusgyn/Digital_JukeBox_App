@@ -6,7 +6,16 @@ const db = new Pool({
   user: process.env.PGUSER,
   password: process.env.PGPASSWORD,
   port: Number(process.env.PGPORT),
-  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false,
+  connectionString: process.env.DATABASE_URL
+});
+
+// Set the search path to "public" to avoid schema-related issues
+db.query('SET search_path TO public;').catch((e: unknown) => {
+  if (e instanceof Error) {
+    console.error(`Error setting search_path to public:\n${e.message}`);
+  } else {
+    console.error(`Unexpected error setting search_path to public:\n${e}`);
+  }
 });
 
 db
