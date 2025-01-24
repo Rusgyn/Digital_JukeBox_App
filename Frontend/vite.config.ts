@@ -15,7 +15,7 @@ export default defineConfig({
         target: 'http://localhost:3001', // Backend URL. PORT: 3001
         changeOrigin: true,
         secure: false,
-        //rewrite: (path) => path.replace(/^\/jukeBox/, '') // Optionally remove /jukeBox prefix. This is useful when the backend server does not expect the /jukeBox prefix in the URL. '/jukeBox/songs' will be rewritten as /songs before being forwarded to the backend server.
+        rewrite: (path) => path.replace(/^\/jukeBox/, '') // Optionally remove /jukeBox prefix. This is useful when the backend server does not expect the /jukeBox prefix in the URL. '/jukeBox/songs' will be rewritten as /songs before being forwarded to the backend server. Works in Backend only.
       }, 
     },
   },
