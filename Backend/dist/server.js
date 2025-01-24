@@ -69,17 +69,22 @@ const body_parser_1 = __importDefault(require("body-parser"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const database_1 = __importDefault(require("./db/database"));
 const admin_users_1 = __importDefault(require("./db/queries/admin_users"));
+const dotenv_1 = __importDefault(require("dotenv")); // Load environment variables from a .env file into process.env
+dotenv_1.default.config(); // Load environment variables from a .env file into process.env
+// handles dotenv for databasing
+dotenv_1.default.config({ path: path_1.default.resolve(__dirname, '../.env') });
 const app = (0, express_1.default)();
 const PORT = 3001;
+const saltRounds = 10;
 // Middleware
 app.use((0, morgan_1.default)('dev'));
 app.use(body_parser_1.default.json());
 // Set schema search path (explicitly set it to 'public')
-database_1.default.query('SET search_path TO public;')
-    .then(() => console.log('Schema search path set to public'))
-    .catch((err) => console.error('Error setting schema search path:', err));
+// db.query('SET search_path TO public;')
+//   .then(() => console.log('Schema search path set to public'))
+//   .catch((err) => console.error('Error setting schema search path:', err));
 // Test DB connection and table
-database_1.default.query('SELECT * FROM admin_users LIMIT 1')
+database_1.default.query("SELECT * FROM admin_users WHERE email = 'sb@gmail.com';")
     .then((res) => console.log('Admin Users Table Found:', res.rows))
     .catch((err) => console.error('Error querying admin_users table:', err));
 // API Routes
@@ -95,14 +100,29 @@ app.post('/jukeBox/admin-login', (req, res) => __awaiter(void 0, void 0, void 0,
     try {
         const isUserExist = yield admin_users_1.default.getAdminUserByEmail(email);
         if (!isUserExist) {
+            console.log('User not found for email:', email);
             res.status(401).json({ error: 'Invalid credentials!' });
             return;
         }
+        // Compare the plain-text password
+        // if (password !== isUserExist.password_digest) {
+        //   console.log('Password does not match for email:', email);
+        //   res.status(401).json({ error: "Invalid email or password" });
+        //   return;
+        // }
+        // Log the plaintext password and hashed password from the database
+        console.log('Plaintext Password:', password);
+        // const hashedPassword = await bcrypt.hash(isUserExist.password_digest, saltRounds);
+        //console.log('Hashed Password in DB:', hashedPassword);
+        console.log('Hashed Password in DB:', isUserExist.password_digest);
         const isPasswordValid = yield bcryptjs_1.default.compare(password, isUserExist.password_digest);
+        console.log('Password Comparison Result:', isPasswordValid);
         if (!isPasswordValid) {
+            console.log('Password does not match for email:', email);
             res.status(401).json({ error: 'Invalid credentials!' });
             return;
         }
+        console.log('Login successful for email:', email);
         res.status(200).json({ message: 'Login successful!' });
     }
     catch (error) {

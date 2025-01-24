@@ -76,23 +76,28 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import bcrypt from 'bcryptjs';
 import db from './db/database';
-
 import adminUserQueries from './db/queries/admin_users';
+import dotenv from 'dotenv'; // Load environment variables from a .env file into process.env
+
+dotenv.config(); // Load environment variables from a .env file into process.env
+// handles dotenv for databasing
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const app = express();
 const PORT = 3001;
+const saltRounds = 10;
 
 // Middleware
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 
 // Set schema search path (explicitly set it to 'public')
-db.query('SET search_path TO public;')
-  .then(() => console.log('Schema search path set to public'))
-  .catch((err) => console.error('Error setting schema search path:', err));
+// db.query('SET search_path TO public;')
+//   .then(() => console.log('Schema search path set to public'))
+//   .catch((err) => console.error('Error setting schema search path:', err));
 
 // Test DB connection and table
-db.query('SELECT * FROM admin_users LIMIT 1')
+db.query("SELECT * FROM admin_users WHERE email = 'sb@gmail.com';")
   .then((res) => console.log('Admin Users Table Found:', res.rows))
   .catch((err) => console.error('Error querying admin_users table:', err));
 
@@ -113,23 +118,47 @@ app.post('/jukeBox/admin-login', async (req: Request, res: Response): Promise<vo
     const isUserExist = await adminUserQueries.getAdminUserByEmail(email);
 
     if (!isUserExist) {
+      console.log('User not found for email:', email);
       res.status(401).json({ error: 'Invalid credentials!' });
       return;
     }
+
+        // Compare the plain-text password
+        // if (password !== isUserExist.password_digest) {
+        //   console.log('Password does not match for email:', email);
+        //   res.status(401).json({ error: "Invalid email or password" });
+        //   return;
+        // }
+    
+    // Log the plaintext password and hashed password from the database
+    console.log('Plaintext Password:', password);
+
+    // const hashedPassword = await bcrypt.hash(isUserExist.password_digest, saltRounds);
+    //console.log('Hashed Password in DB:', hashedPassword);
+    console.log('Hashed Password in DB:', isUserExist.password_digest);
 
     const isPasswordValid = await bcrypt.compare(password, isUserExist.password_digest);
 
+    console.log('Password Comparison Result:', isPasswordValid);
+
     if (!isPasswordValid) {
+      console.log('Password does not match for email:', email);
       res.status(401).json({ error: 'Invalid credentials!' });
       return;
     }
 
+    console.log('Login successful for email:', email);
     res.status(200).json({ message: 'Login successful!' });
+
   } catch (error) {
     console.error('Error logging in: ', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+
+
 
 // Static Files for React
 app.use(express.static(path.resolve(__dirname, '../../Frontend/dist')));
