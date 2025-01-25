@@ -78,3 +78,5 @@ const AdminRegister = () => {
     </div>
   );
 }
+
+export default AdminRegister;
