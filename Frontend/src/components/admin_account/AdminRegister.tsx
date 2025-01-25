@@ -1,7 +1,11 @@
 import { useState } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import '../../styles/Admin/AdminRegister.scss';
 
 const AdminRegister = () => {
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -11,6 +15,27 @@ const AdminRegister = () => {
   const handleRegister = async (event: React.FormEvent)=> {
     event.preventDefault();
     console.log('The Register Request: ', { firstName, lastName, email, password, role });
+
+    try {
+      const response = await axios.post('/jukeBox/admin-register', 
+        {
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          password_digest: password,
+          admin_role_id: role
+        }
+      );
+
+      console.log('Response is: ', response);
+
+      if (response.status === 200) {
+        navigate('/admin-login');
+      }
+    } catch (error:any) {
+      console.error('Error occurred while registering: ', error);
+      setError('An error occurred. Please try again.');
+    }
   };
 
   return (
@@ -76,6 +101,7 @@ const AdminRegister = () => {
           </label>
           <button type='submit'>Register</button>
         </div>
+        {error && <p className="error">{error}</p>}
       </form>
     </div>
   );
