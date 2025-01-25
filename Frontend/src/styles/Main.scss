@@ -22,7 +22,8 @@
   color: blue;
 }
 
-.main__dashboard_button {
+.main__dashboard_login,
+.main__dashboard_register {
   display: flex;
   flex-direction: column;
   align-items: center;
