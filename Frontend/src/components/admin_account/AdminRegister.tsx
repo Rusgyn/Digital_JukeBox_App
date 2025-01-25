@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import '../../styles/Admin/AdminRegister.scss';
 
 const AdminRegister = () => {
   const [firstName, setFirstName] = useState('');
@@ -73,6 +74,7 @@ const AdminRegister = () => {
               <option value={2}>Admin</option>
             </select>
           </label>
+          <button type='submit'>Register</button>
         </div>
       </form>
     </div>
