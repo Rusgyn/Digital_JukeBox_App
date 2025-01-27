@@ -63,6 +63,7 @@ app.post('/admin-login', (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 }));
 app.post('/admin-register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Request Body:', req.body);
     const { firstName, lastName, email, password, role } = req.body;
     try {
         const isUserExist = yield admin_users_1.default.getAdminUserByEmail(email);
@@ -81,6 +82,7 @@ app.post('/admin-register', (req, res) => __awaiter(void 0, void 0, void 0, func
             updated_at: new Date(),
         };
         const addNewAdminUser = yield admin_users_1.default.addAdminUser(newAdminUser);
+        console.log("New user added: ", addNewAdminUser);
         res.status(201).json(addNewAdminUser);
     }
     catch (error) {

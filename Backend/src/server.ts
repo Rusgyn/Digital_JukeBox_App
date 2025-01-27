@@ -63,8 +63,9 @@ app.post('/admin-login', async (req: Request, res: Response): Promise<void> => {
 });
 
 app.post('/admin-register', async (req: Request, res: Response): Promise<void> => {
+  console.log('Request Body:', req.body);
   const {firstName, lastName, email, password, role } = req.body;
-
+ 
   try {
     const isUserExist = await adminUserQueries.getAdminUserByEmail(email);
 
@@ -85,6 +86,7 @@ app.post('/admin-register', async (req: Request, res: Response): Promise<void> =
     };
 
     const addNewAdminUser = await adminUserQueries.addAdminUser(newAdminUser);
+    console.log("New user added: ", addNewAdminUser);
     res.status(201).json(addNewAdminUser);
   } catch (error) {
     console.error('Error registering user: ', error);
