@@ -19,17 +19,17 @@ const AdminRegister = () => {
     try {
       const response = await axios.post('/jukeBox/admin-register', 
         {
-          first_name: firstName,
-          last_name: lastName,
+          firstName,
+          lastName,
           email,
-          password_digest: password,
-          admin_role_id: role
+          password,
+          role
         }
       );
 
       console.log('Response is: ', response);
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         navigate('/admin-login');
       }
     } catch (error:any) {
