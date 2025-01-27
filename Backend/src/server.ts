@@ -17,7 +17,8 @@ const saltRounds = 10;
 
 // Middleware
 app.use(morgan('dev'));
-app.use(bodyParser.json());
+app.use(express.json()); // Built-in middleware for parsing JSON
+app.use(express.urlencoded({ extended: true })); // Built-in middleware for parsing URL-encoded data
 
 // Test DB connection and table (This is Temporary only!)
 db.query("SELECT * FROM admin_users WHERE email = 'sb@gmail.com';")

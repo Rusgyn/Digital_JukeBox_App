@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const morgan_1 = __importDefault(require("morgan"));
-const body_parser_1 = __importDefault(require("body-parser"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const database_1 = __importDefault(require("./db/database"));
 const dotenv_1 = __importDefault(require("dotenv")); // Load environment variables from a .env file into process.env
@@ -27,7 +26,8 @@ const PORT = 3001;
 const saltRounds = 10;
 // Middleware
 app.use((0, morgan_1.default)('dev'));
-app.use(body_parser_1.default.json());
+app.use(express_1.default.json()); // Built-in middleware for parsing JSON
+app.use(express_1.default.urlencoded({ extended: true })); // Built-in middleware for parsing URL-encoded data
 // Test DB connection and table (This is Temporary only!)
 database_1.default.query("SELECT * FROM admin_users WHERE email = 'sb@gmail.com';")
     .then((res) => console.log('Admin Users Table Found:', res.rows))
