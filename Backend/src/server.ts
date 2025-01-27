@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
 import morgan from 'morgan';
-import bodyParser from 'body-parser';
 import bcrypt from 'bcryptjs';
+import session from 'express-session';
 import db from './db/database';
 import dotenv from 'dotenv'; // Load environment variables from a .env file into process.env
 import adminUserQueries from './db/queries/admin_users';
