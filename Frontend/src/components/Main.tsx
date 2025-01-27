@@ -11,10 +11,6 @@ const Main = () => {
     navigate('/admin-login');
   };
 
-  const handleRegisterNavigation = () => {
-    navigate('/admin-register');
-  };
-
   useEffect(() => {
     // Test the backend connection
     axios.get('/jukeBox')
@@ -31,11 +27,11 @@ const Main = () => {
           type='button'
           value="login"
           onClick={handleLoginNavigation}>Login</button>
-        <button className='main__dashboard_register'
+        {/* <button className='main__dashboard_register'
           type='button'
           value='register'
           onClick={handleRegisterNavigation}>Register
-        </button>
+        </button> */}
       </div>
     </div>
   )

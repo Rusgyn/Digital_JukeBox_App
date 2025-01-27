@@ -4,13 +4,17 @@ import '../styles/Dashboard.scss';
 const Dashboard = () => {
   const navigate = useNavigate();
 
-  const handleAdminLoginNavigation = () => {
-    navigate('/admin-login');
-  };
-
   const handleMainNavigation = () => {
     navigate('/');
   };
+
+  const handleRegisterNavigation = () => {
+    navigate('/admin-register');
+  };
+
+  // const handleAdminLoginNavigation = () => {
+  //   navigate('/admin-login');
+  // };
 
   return (
     <div className="dashboard">
@@ -23,11 +27,16 @@ const Dashboard = () => {
           type='button'
           value="Main"
           onClick={handleMainNavigation}>Main</button>
-        <button 
+        <button
+          className="dashboard__content__register_button"
+          type='button'
+          value="register"
+          onClick={handleRegisterNavigation}>Add new account</button>
+        {/* <button 
           className="dashboard__content__admin-login_button"
           type='button'
           value="Admin Login"
-          onClick={handleAdminLoginNavigation}>Login</button>
+          onClick={handleAdminLoginNavigation}>Login</button> */}
       </div>
     </div>
   );
