@@ -23,10 +23,15 @@ const Main = () => {
       <h2> This is Main Component </h2><br/>
       <p> Backend Test | API response: {data} </p>
       <div className='main__content'>
-        <button className='main__dashboard_button'
+        <button className='main__dashboard_login'
           type='button'
-          value="Dashboard"
+          value="login"
           onClick={handleLoginNavigation}>Login</button>
+        {/* <button className='main__dashboard_register'
+          type='button'
+          value='register'
+          onClick={handleRegisterNavigation}>Register
+        </button> */}
       </div>
     </div>
   )

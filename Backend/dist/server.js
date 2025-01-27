@@ -18,8 +18,8 @@ const morgan_1 = __importDefault(require("morgan"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const database_1 = __importDefault(require("./db/database"));
-const admin_users_1 = __importDefault(require("./db/queries/admin_users"));
 const dotenv_1 = __importDefault(require("dotenv")); // Load environment variables from a .env file into process.env
+const admin_users_1 = __importDefault(require("./db/queries/admin_users"));
 // handles dotenv for databasing
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, '../.env') });
 const app = (0, express_1.default)();
@@ -61,6 +61,35 @@ app.post('/admin-login', (req, res) => __awaiter(void 0, void 0, void 0, functio
         console.error('Error logging in: ', error);
         res.status(500).json({ error: 'Internal server error' });
     }
+}));
+app.post('/admin-register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Request Body:', req.body);
+    const { firstName, lastName, email, password, role } = req.body;
+    try {
+        const isUserExist = yield admin_users_1.default.getAdminUserByEmail(email);
+        if (isUserExist) {
+            console.log('User already exists for email:', email);
+            res.status(400).json({ error: 'User already exists!' });
+            return;
+        }
+        const newAdminUser = {
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            password_digest: password, // Assuming password_digest is the hashed password
+            admin_role_id: role,
+            created_at: new Date(),
+            updated_at: new Date(),
+        };
+        const addNewAdminUser = yield admin_users_1.default.addAdminUser(newAdminUser);
+        console.log("New user added: ", addNewAdminUser);
+        res.status(201).json(addNewAdminUser);
+    }
+    catch (error) {
+        console.error('Error registering user: ', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+    ;
 }));
 // Static Files for React
 //This tells your server to serve the static files (HTML, CSS, JS) that were built by your React app. These files are typically stored in the dist folder after running a build (npm run build).
