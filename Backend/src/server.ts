@@ -7,6 +7,7 @@ import db from './db/database';
 import dotenv from 'dotenv'; // Load env var from .env file into process.env
 import adminUserQueries from './db/queries/admin_users';
 import AdminUser from './types/AdminUserTypes';
+import isUserLoggedIn from './helpers/helperFunctions';
 
 const app = express();
 const PORT = 3001;
@@ -43,6 +44,24 @@ app.use(
 // API Routes
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello! Digital JukeBox App BackEnd is running!');
+});
+
+app.get('/check-session', async (req: Request, res: Response): Promise<any> => {
+  
+  console.log("You are now checking the session");
+
+  try {
+    if(isUserLoggedIn(req.session)) {
+      console.log("isUserLoggedIn = TRUE")
+      return res.json({ loggedIn: true});
+    }
+    
+    res.json({loggedIn: false})
+  } catch (error) {
+    console.error('Error checking session Backend:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+
 });
 
 app.post('/admin-login', async (req: Request, res: Response): Promise<void> => {

@@ -20,6 +20,7 @@ const express_session_1 = __importDefault(require("express-session"));
 const database_1 = __importDefault(require("./db/database"));
 const dotenv_1 = __importDefault(require("dotenv")); // Load env var from .env file into process.env
 const admin_users_1 = __importDefault(require("./db/queries/admin_users"));
+const helperFunctions_1 = __importDefault(require("./helpers/helperFunctions"));
 const app = (0, express_1.default)();
 const PORT = 3001;
 const saltRounds = 10;
@@ -49,6 +50,20 @@ app.use((0, express_session_1.default)({
 app.get('/', (req, res) => {
     res.send('Hello! Digital JukeBox App BackEnd is running!');
 });
+app.get('/check-session', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("You are now checking the session");
+    try {
+        if ((0, helperFunctions_1.default)(req.session)) {
+            console.log("isUserLoggedIn = TRUE");
+            return res.json({ loggedIn: true });
+        }
+        res.json({ loggedIn: false });
+    }
+    catch (error) {
+        console.error('Error checking session Backend:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}));
 app.post('/admin-login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     if (!email || !password) {
