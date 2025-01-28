@@ -15,27 +15,55 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const path_1 = __importDefault(require("path"));
 const morgan_1 = __importDefault(require("morgan"));
-const body_parser_1 = __importDefault(require("body-parser"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const express_session_1 = __importDefault(require("express-session"));
 const database_1 = __importDefault(require("./db/database"));
-const dotenv_1 = __importDefault(require("dotenv")); // Load environment variables from a .env file into process.env
+const dotenv_1 = __importDefault(require("dotenv")); // Load env var from .env file into process.env
 const admin_users_1 = __importDefault(require("./db/queries/admin_users"));
-// handles dotenv for databasing
-dotenv_1.default.config({ path: path_1.default.resolve(__dirname, '../.env') });
+const helperFunctions_1 = __importDefault(require("./helpers/helperFunctions"));
 const app = (0, express_1.default)();
 const PORT = 3001;
 const saltRounds = 10;
+// handles dotenv for databasing
+dotenv_1.default.config({ path: path_1.default.resolve(__dirname, '../.env') });
 // Middleware
-app.use((0, morgan_1.default)('dev'));
-app.use(body_parser_1.default.json());
-// Test DB connection and table (This is Temporary only!)
+app.use((0, morgan_1.default)('dev')); // HTTP request logger
+app.use(express_1.default.json()); // Parse JSON payloads.
+app.use(express_1.default.urlencoded({ extended: true })); // Parse URL-encoded payloads
+// Test DB connection and table during development only (TEMPORARY !)
 database_1.default.query("SELECT * FROM admin_users WHERE email = 'sb@gmail.com';")
     .then((res) => console.log('Admin Users Table Found:', res.rows))
     .catch((err) => console.error('Error querying admin_users table:', err));
+// Session Configuration. **Always place express-session after express.json() and express.urlencoded() middleware for session handling to work properly.
+const sessionSecret = process.env.SESSION_SECRET || 'default_secret';
+app.use((0, express_session_1.default)({
+    secret: sessionSecret, // Secret used to sign the session ID cookie
+    resave: false, // Don't save session if unmodified
+    saveUninitialized: false, // Don't create session until something stored
+    cookie: {
+        httpOnly: true, // Prevent client-side scripts from accessing the cookie
+        secure: false, // `true` for HTTPS in production
+        maxAge: 1000 * 60 * 60, // 1 hour session only
+    }
+}));
 // API Routes
 app.get('/', (req, res) => {
     res.send('Hello! Digital JukeBox App BackEnd is running!');
 });
+app.get('/check-session', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("You are now checking the session");
+    try {
+        if ((0, helperFunctions_1.default)(req.session)) {
+            console.log("isUserLoggedIn = TRUE");
+            return res.json({ loggedIn: true });
+        }
+        res.json({ loggedIn: false });
+    }
+    catch (error) {
+        console.error('Error checking session Backend:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}));
 app.post('/admin-login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -55,7 +83,18 @@ app.post('/admin-login', (req, res) => __awaiter(void 0, void 0, void 0, functio
             res.status(401).json({ error: 'Invalid credentials!' });
             return;
         }
-        res.status(200).json({ message: 'Login successful!' });
+        if (isUserExist && isPasswordValid) {
+            const adminUserId = isUserExist.id;
+            if (adminUserId !== undefined) {
+                req.session.loggedAdminUser = { id: adminUserId };
+                res.status(200).json({ message: 'Login successful!' });
+            }
+            else {
+                console.error('User ID is undefined');
+                res.status(500).json({ error: 'Internal server error' });
+                return;
+            }
+        }
     }
     catch (error) {
         console.error('Error logging in: ', error);

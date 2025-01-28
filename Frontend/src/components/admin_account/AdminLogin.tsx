@@ -1,5 +1,5 @@
 /** Admin login page */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/Admin/AdminLogin.scss';
 import axios from 'axios';
@@ -10,19 +10,32 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  // Check the session
+  useEffect(() => {
+    const checkSession = async() => {
+      try {
+        const response = await axios.get('/jukeBox/check-session', { withCredentials: true }); //it is a configuration option provided by the axios library. A configuration option used to include credentials in cross-site requests, ensuring that authentication and session management work correctly
+
+        if (response.data.loggedIn) {
+          navigate('/dashboard');
+        }
+
+      } catch (error) {
+        console.error("Error checking session Frontend: ", error);
+      }
+    }
+    checkSession();
+  }, [navigate]);
+
   const handleMainNavigation = () => {
     navigate('/');
   };
 
-  // const handleDashboardNavigation = () => {
-  //   navigate('/dashboard');
-  // };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-   
+        
     console.log('The Login Request:', { email: username, password });
-
+    
     try {
       const response = await axios.post('/jukeBox/admin-login', 
         {
