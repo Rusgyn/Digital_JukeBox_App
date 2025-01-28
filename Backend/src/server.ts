@@ -70,8 +70,17 @@ app.post('/admin-login', async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    res.status(200).json({ message: 'Login successful!' });
-
+    if (isUserExist && isPasswordValid) {
+      const adminUserId = isUserExist.id;
+      if (adminUserId !== undefined) {
+        req.session.loggedAdminUser = { id: adminUserId };
+        res.status(200).json({ message: 'Login successful!' });
+      } else {
+        console.error('User ID is undefined');
+        res.status(500).json({ error: 'Internal server error' });
+        return;
+      }      
+    } 
   } catch (error) {
     console.error('Error logging in: ', error);
     res.status(500).json({ error: 'Internal server error' });

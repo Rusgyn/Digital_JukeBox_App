@@ -12,4 +12,5 @@ declare module 'express-session' {
  * NOTE:
  * By default, TypeScript uses the built-in types for express-session, and it does not include your custom properties.
  * Hence, you need to extend the SessionData interface provided by the express-session library to include your custom property (example: loggedAdminUser).
+ * This has to be added in your Tsconfig.json include file.
  */

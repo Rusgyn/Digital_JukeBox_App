@@ -68,7 +68,18 @@ app.post('/admin-login', (req, res) => __awaiter(void 0, void 0, void 0, functio
             res.status(401).json({ error: 'Invalid credentials!' });
             return;
         }
-        res.status(200).json({ message: 'Login successful!' });
+        if (isUserExist && isPasswordValid) {
+            const adminUserId = isUserExist.id;
+            if (adminUserId !== undefined) {
+                req.session.loggedAdminUser = { id: adminUserId };
+                res.status(200).json({ message: 'Login successful!' });
+            }
+            else {
+                console.error('User ID is undefined');
+                res.status(500).json({ error: 'Internal server error' });
+                return;
+            }
+        }
     }
     catch (error) {
         console.error('Error logging in: ', error);
