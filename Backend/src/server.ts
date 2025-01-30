@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import bcrypt from 'bcryptjs';
 import session from 'express-session';
 import db from './db/database';
+import cors from 'cors';
 import dotenv from 'dotenv'; // Load env var from .env file into process.env
 import adminUserQueries from './db/queries/admin_users';
 import AdminUser from './types/AdminUserTypes';
@@ -13,8 +14,16 @@ const app = express();
 const PORT = 3001;
 const saltRounds = 10;
 
-// handles dotenv for databasing
+// handles dotenv for databasing. Loaded at the start of your app.
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
+//CORS middleware. Should be added before any other routes or middleware this ensures that the CORS headers are properly set in the response before any other logic 
+app.use(
+  cors({
+    origin: 'http://localhost:5173', //or more [,'http://another-allowed-origin.com']
+    credentials: true
+  })
+);
 
 // Middleware
 app.use(morgan('dev')); // HTTP request logger
@@ -27,19 +36,25 @@ db.query("SELECT * FROM admin_users WHERE email = 'sb@gmail.com';")
   .catch((err) => console.error('Error querying admin_users table:', err));
 
 // Session Configuration. **Always place express-session after express.json() and express.urlencoded() middleware for session handling to work properly.
-const sessionSecret = process.env.SESSION_SECRET || 'default_secret';
-app.use(
-  session({
-    secret: sessionSecret as string, // Secret used to sign the session ID cookie
-    resave: false, // Don't save session if unmodified
-    saveUninitialized: false, // Don't create session until something stored
-    cookie: {
-      httpOnly: true, // Prevent client-side scripts from accessing the cookie
-      secure: false, // `true` for HTTPS in production
-      maxAge: 1000 * 60 * 60, // 1 hour session only
-    }
-  })
-);
+const sessionSecret = process.env.PGSESSION_SECRET;
+if (sessionSecret) {
+  app.use(
+    session({
+      secret: sessionSecret as string, // Secret used to sign the session ID cookie
+      resave: false, // Don't save session if unmodified
+      saveUninitialized: false, // Don't create session until something stored
+      cookie: {
+        httpOnly: true, // Prevent client-side scripts from accessing the cookie
+        secure: false, // `true` for HTTPS in production
+        maxAge: 1000 * 60 * 60, // 1 hour session only
+      }
+    })
+  );
+} else {
+  // If the SESSION_SECRET is not set, a warning message
+  console.warn('SESSION_SECRET is not set in the .env file. Please ensure it is defined for secure session handling.');
+  process.exit(1); // terminate the app when secret is not found.
+}
 
 // API Routes
 app.get('/', (req: Request, res: Response) => {
@@ -106,6 +121,20 @@ app.post('/admin-login', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+app.post('/admin-logout', async (req: Request, res: Response): Promise<any> => {
+  console.log('Logout route hit');
+  console.log('Session data:', req.session);
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.status(200).json({ message: 'Logout successful!' });
+    }
+  });
+});
+
+
 app.post('/admin-register', async (req: Request, res: Response): Promise<void> => {
   console.log('Request Body:', req.body);
   const {firstName, lastName, email, password, role } = req.body;
@@ -139,6 +168,11 @@ app.post('/admin-register', async (req: Request, res: Response): Promise<void> =
 
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ message: 'Server is running' });
+});
+
 // Static Files for React
 //This tells your server to serve the static files (HTML, CSS, JS) that were built by your React app. These files are typically stored in the dist folder after running a build (npm run build).
 app.use(express.static(path.resolve(__dirname, '../../Frontend/dist')));
@@ -146,6 +180,12 @@ app.use(express.static(path.resolve(__dirname, '../../Frontend/dist')));
 //This is a "catch-all" route for any request that doesn’t match your backend API routes (like /jukeBox). It ensures that React handles the routing for all unknown paths (e.g., /dashboard, /profile).
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../../Frontend/dist/index.html'));
+});
+
+// Catch-all error handler
+app.use((err: any, req: Request, res: Response, next: Function) => {
+  console.error(err.stack);
+  res.status(500).send({ error: 'Something went wrong!' });
 });
 
 // Start the server

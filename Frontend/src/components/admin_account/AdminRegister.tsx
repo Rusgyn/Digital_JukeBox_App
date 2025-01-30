@@ -12,6 +12,10 @@ const AdminRegister = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState(2);
 
+  const handleMainNavigation = () => {
+    navigate('/dashboard');
+  }
+
   const handleRegister = async (event: React.FormEvent)=> {
     event.preventDefault();
     console.log('The Register Request: ', { firstName, lastName, email, password, role });
@@ -99,10 +103,18 @@ const AdminRegister = () => {
               <option value={2}>Admin</option>
             </select>
           </label>
-          <button type='submit'>Register</button>
+          <button 
+            className='admin-register__Register'
+            type='submit'>Register
+          </button>
         </div>
         {error && <p className="error">{error}</p>}
       </form>
+      <div className='admin-register__dashboard_button'>
+        <p onClick={handleMainNavigation}>
+        Dashboard
+        </p>
+      </div>
     </div>
   );
 }

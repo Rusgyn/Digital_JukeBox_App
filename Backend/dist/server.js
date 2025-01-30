@@ -18,14 +18,20 @@ const morgan_1 = __importDefault(require("morgan"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const express_session_1 = __importDefault(require("express-session"));
 const database_1 = __importDefault(require("./db/database"));
+const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv")); // Load env var from .env file into process.env
 const admin_users_1 = __importDefault(require("./db/queries/admin_users"));
 const helperFunctions_1 = __importDefault(require("./helpers/helperFunctions"));
 const app = (0, express_1.default)();
 const PORT = 3001;
 const saltRounds = 10;
-// handles dotenv for databasing
+// handles dotenv for databasing. Loaded at the start of your app.
 dotenv_1.default.config({ path: path_1.default.resolve(__dirname, '../.env') });
+//CORS middleware. Should be added before any other routes or middleware this ensures that the CORS headers are properly set in the response before any other logic 
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:5173', //or more [,'http://another-allowed-origin.com']
+    credentials: true
+}));
 // Middleware
 app.use((0, morgan_1.default)('dev')); // HTTP request logger
 app.use(express_1.default.json()); // Parse JSON payloads.
@@ -35,17 +41,24 @@ database_1.default.query("SELECT * FROM admin_users WHERE email = 'sb@gmail.com'
     .then((res) => console.log('Admin Users Table Found:', res.rows))
     .catch((err) => console.error('Error querying admin_users table:', err));
 // Session Configuration. **Always place express-session after express.json() and express.urlencoded() middleware for session handling to work properly.
-const sessionSecret = process.env.SESSION_SECRET || 'default_secret';
-app.use((0, express_session_1.default)({
-    secret: sessionSecret, // Secret used to sign the session ID cookie
-    resave: false, // Don't save session if unmodified
-    saveUninitialized: false, // Don't create session until something stored
-    cookie: {
-        httpOnly: true, // Prevent client-side scripts from accessing the cookie
-        secure: false, // `true` for HTTPS in production
-        maxAge: 1000 * 60 * 60, // 1 hour session only
-    }
-}));
+const sessionSecret = process.env.PGSESSION_SECRET;
+if (sessionSecret) {
+    app.use((0, express_session_1.default)({
+        secret: sessionSecret, // Secret used to sign the session ID cookie
+        resave: false, // Don't save session if unmodified
+        saveUninitialized: false, // Don't create session until something stored
+        cookie: {
+            httpOnly: true, // Prevent client-side scripts from accessing the cookie
+            secure: false, // `true` for HTTPS in production
+            maxAge: 1000 * 60 * 60, // 1 hour session only
+        }
+    }));
+}
+else {
+    // If the SESSION_SECRET is not set, a warning message
+    console.warn('SESSION_SECRET is not set in the .env file. Please ensure it is defined for secure session handling.');
+    process.exit(1); // terminate the app when secret is not found.
+}
 // API Routes
 app.get('/', (req, res) => {
     res.send('Hello! Digital JukeBox App BackEnd is running!');
@@ -101,6 +114,19 @@ app.post('/admin-login', (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(500).json({ error: 'Internal server error' });
     }
 }));
+app.post('/admin-logout', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Logout route hit');
+    console.log('Session data:', req.session);
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+        else {
+            res.status(200).json({ message: 'Logout successful!' });
+        }
+    });
+}));
 app.post('/admin-register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Request Body:', req.body);
     const { firstName, lastName, email, password, role } = req.body;
@@ -130,12 +156,21 @@ app.post('/admin-register', (req, res) => __awaiter(void 0, void 0, void 0, func
     }
     ;
 }));
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.status(200).json({ message: 'Server is running' });
+});
 // Static Files for React
 //This tells your server to serve the static files (HTML, CSS, JS) that were built by your React app. These files are typically stored in the dist folder after running a build (npm run build).
 app.use(express_1.default.static(path_1.default.resolve(__dirname, '../../Frontend/dist')));
 //This is a "catch-all" route for any request that doesn’t match your backend API routes (like /jukeBox). It ensures that React handles the routing for all unknown paths (e.g., /dashboard, /profile).
 app.get('*', (req, res) => {
     res.sendFile(path_1.default.resolve(__dirname, '../../Frontend/dist/index.html'));
+});
+// Catch-all error handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send({ error: 'Something went wrong!' });
 });
 // Start the server
 app.listen(PORT, () => {

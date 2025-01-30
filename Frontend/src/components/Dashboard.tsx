@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import '../styles/Dashboard.scss';
 
 const Dashboard = () => {
@@ -12,14 +13,24 @@ const Dashboard = () => {
     navigate('/admin-register');
   };
 
-  // const handleAdminLoginNavigation = () => {
-  //   navigate('/admin-login');
-  // };
+  const handleAdminLogoutNavigation = async() => {
+    try {
+      console.log('Sending logout request...');
+      const response = await axios.post('/admin-logout', {}, {withCredentials: true}); // {} the request body, which is empty in this case. Without "withCredentials: true", the browser will not include cookies, and the backend won’t recognize the session.
+      console.log('Logout response:', response);
+      if (response.status === 200) {
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error logging out: ', error);
+    }
+    
+  }
 
   return (
     <div className="dashboard">
       <h2>Welcome to the Dashboard!</h2>
-      <p>Click on the buttons below to navigate to different pages.</p>
+      <p>Click on the buttons below to navigate.</p>
 
       <div className="dashboard__content">
         <button
@@ -31,12 +42,12 @@ const Dashboard = () => {
           className="dashboard__content__register_button"
           type='button'
           value="register"
-          onClick={handleRegisterNavigation}>Add new account</button>
-        {/* <button 
-          className="dashboard__content__admin-login_button"
+          onClick={handleRegisterNavigation}>Add admin user</button>
+        <button 
+          className="dashboard__content__admin-logout_button"
           type='button'
-          value="Admin Login"
-          onClick={handleAdminLoginNavigation}>Login</button> */}
+          value="logout"
+          onClick={handleAdminLogoutNavigation}>Logout</button>
       </div>
     </div>
   );
