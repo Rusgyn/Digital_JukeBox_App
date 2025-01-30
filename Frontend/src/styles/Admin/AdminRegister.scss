@@ -12,19 +12,32 @@
 
 .admin-register__Form {
   display: flex;
-  flex-direction: column;
-  padding-top: 1rem;
+  flex-direction: column-reverse
+  
 }
 
 .admin-register__Register {
   display: flex;
-  flex-direction: column;
-  background-color: whitesmoke;
+  flex-direction: row;
+  border: none;
+  background-color: inherit;
   color: blue;
-  border: 1px solid gray;
-  width: 10rem;
+  width: 8rem;
+  height: 2rem;
+  font-size: 1rem;
   &:hover {
-    background-color: blue;
-    color: whitesmoke
+    color: green;
+  }
+}
+
+.admin-register__dashboard_button {
+  display: flex;
+  flex-direction: row;
+  color: blue;
+  width: 8rem;
+  height: 2rem;
+  font-size: 1rem;
+  &:hover {
+    color: red;
   }
 }
