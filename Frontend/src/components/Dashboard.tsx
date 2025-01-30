@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import '../styles/Dashboard.scss';
 
 const Dashboard = () => {
@@ -12,9 +13,19 @@ const Dashboard = () => {
     navigate('/admin-register');
   };
 
-  // const handleAdminLoginNavigation = () => {
-  //   navigate('/admin-login');
-  // };
+  const handleAdminLogoutNavigation = async() => {
+    try {
+      console.log('Sending logout request...');
+      const response = await axios.post('/admin-logout', {}, {withCredentials: true}); //Without "withCredentials: true", the browser will not include cookies, and the backend won’t recognize the session.
+      console.log('Logout response:', response);
+      if (response.status === 200) {
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error logging out: ', error);
+    }
+    
+  }
 
   return (
     <div className="dashboard">
@@ -32,11 +43,11 @@ const Dashboard = () => {
           type='button'
           value="register"
           onClick={handleRegisterNavigation}>Add new account</button>
-        {/* <button 
-          className="dashboard__content__admin-login_button"
+        <button 
+          className="dashboard__content__admin-logout_button"
           type='button'
-          value="Admin Login"
-          onClick={handleAdminLoginNavigation}>Login</button> */}
+          value="logout"
+          onClick={handleAdminLogoutNavigation}>Logout</button>
       </div>
     </div>
   );
