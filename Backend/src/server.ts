@@ -4,6 +4,7 @@ import morgan from 'morgan';
 import bcrypt from 'bcryptjs';
 import session from 'express-session';
 import db from './db/database';
+import cors from 'cors';
 import dotenv from 'dotenv'; // Load env var from .env file into process.env
 import adminUserQueries from './db/queries/admin_users';
 import AdminUser from './types/AdminUserTypes';
@@ -13,8 +14,16 @@ const app = express();
 const PORT = 3001;
 const saltRounds = 10;
 
-// handles dotenv for databasing
+// handles dotenv for databasing. Loaded at the start of your app.
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
+//CORS middleware should be added before any other routes or middleware this ensures that the CORS headers are properly set in the response before any other logic 
+app.use(
+  cors({
+    origin: 'http://localhost:5173', //or more [,'http://another-allowed-origin.com']
+    credentials: true
+  })
+);
 
 // Middleware
 app.use(morgan('dev')); // HTTP request logger
