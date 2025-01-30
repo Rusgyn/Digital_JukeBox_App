@@ -17,7 +17,7 @@ const saltRounds = 10;
 // handles dotenv for databasing. Loaded at the start of your app.
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-//CORS middleware should be added before any other routes or middleware this ensures that the CORS headers are properly set in the response before any other logic 
+//CORS middleware. Should be added before any other routes or middleware this ensures that the CORS headers are properly set in the response before any other logic 
 app.use(
   cors({
     origin: 'http://localhost:5173', //or more [,'http://another-allowed-origin.com']
@@ -36,19 +36,25 @@ db.query("SELECT * FROM admin_users WHERE email = 'sb@gmail.com';")
   .catch((err) => console.error('Error querying admin_users table:', err));
 
 // Session Configuration. **Always place express-session after express.json() and express.urlencoded() middleware for session handling to work properly.
-const sessionSecret = process.env.SESSION_SECRET || 'default_secret';
-app.use(
-  session({
-    secret: sessionSecret as string, // Secret used to sign the session ID cookie
-    resave: false, // Don't save session if unmodified
-    saveUninitialized: false, // Don't create session until something stored
-    cookie: {
-      httpOnly: true, // Prevent client-side scripts from accessing the cookie
-      secure: false, // `true` for HTTPS in production
-      maxAge: 1000 * 60 * 60, // 1 hour session only
-    }
-  })
-);
+const sessionSecret = process.env.SESSION_SECRET;
+if (sessionSecret) {
+  app.use(
+    session({
+      secret: sessionSecret as string, // Secret used to sign the session ID cookie
+      resave: false, // Don't save session if unmodified
+      saveUninitialized: false, // Don't create session until something stored
+      cookie: {
+        httpOnly: true, // Prevent client-side scripts from accessing the cookie
+        secure: false, // `true` for HTTPS in production
+        maxAge: 1000 * 60 * 60, // 1 hour session only
+      }
+    })
+  );
+} else {
+  // If the SESSION_SECRET is not set, a warning message
+  console.warn('SESSION_SECRET is not set in the .env file. Please ensure it is defined for secure session handling.');
+  process.exit(1); // terminate the app when secret is not found.
+}
 
 // API Routes
 app.get('/', (req: Request, res: Response) => {
