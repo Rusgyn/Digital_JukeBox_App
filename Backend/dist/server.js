@@ -101,6 +101,19 @@ app.post('/admin-login', (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(500).json({ error: 'Internal server error' });
     }
 }));
+app.post('/admin-logout', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Logout route hit');
+    console.log('Session data:', req.session);
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error destroying session:', err);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+        else {
+            res.status(200).json({ message: 'Logout successful!' });
+        }
+    });
+}));
 app.post('/admin-register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Request Body:', req.body);
     const { firstName, lastName, email, password, role } = req.body;

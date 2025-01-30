@@ -106,6 +106,20 @@ app.post('/admin-login', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
+app.post('/admin-logout', async (req: Request, res: Response): Promise<any> => {
+  console.log('Logout route hit');
+  console.log('Session data:', req.session);
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      res.status(500).json({ error: 'Internal server error' });
+    } else {
+      res.status(200).json({ message: 'Logout successful!' });
+    }
+  });
+});
+
+
 app.post('/admin-register', async (req: Request, res: Response): Promise<void> => {
   console.log('Request Body:', req.body);
   const {firstName, lastName, email, password, role } = req.body;
