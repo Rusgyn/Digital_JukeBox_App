@@ -30,7 +30,7 @@ const Dashboard = () => {
   return (
     <div className="dashboard">
       <h2>Welcome to the Dashboard!</h2>
-      <p>Click on the buttons below to navigate to different pages.</p>
+      <p>Click on the buttons below to navigate.</p>
 
       <div className="dashboard__content">
         <button
@@ -42,7 +42,7 @@ const Dashboard = () => {
           className="dashboard__content__register_button"
           type='button'
           value="register"
-          onClick={handleRegisterNavigation}>Add new account</button>
+          onClick={handleRegisterNavigation}>Add admin user</button>
         <button 
           className="dashboard__content__admin-logout_button"
           type='button'
