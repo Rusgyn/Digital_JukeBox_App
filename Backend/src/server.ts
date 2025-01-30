@@ -36,7 +36,7 @@ db.query("SELECT * FROM admin_users WHERE email = 'sb@gmail.com';")
   .catch((err) => console.error('Error querying admin_users table:', err));
 
 // Session Configuration. **Always place express-session after express.json() and express.urlencoded() middleware for session handling to work properly.
-const sessionSecret = process.env.SESSION_SECRET;
+const sessionSecret = process.env.PGSESSION_SECRET;
 if (sessionSecret) {
   app.use(
     session({
