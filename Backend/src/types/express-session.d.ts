@@ -3,7 +3,7 @@ import session from "express-session";
 // Extend the existing session data interface
 declare module 'express-session' { 
   interface SessionData {
-    loggedAdminUser: { id: number };
+    loggedAdminUser: { id: number, username: string };
     // Can define more custom property here
   }
 }

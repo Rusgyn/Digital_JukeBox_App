@@ -67,7 +67,7 @@ app.get('/check-session', async (req: Request, res: Response): Promise<any> => {
 
   try {
     if(isUserLoggedIn(req.session)) {
-      console.log("isUserLoggedIn = TRUE")
+      console.log("A user is currently logged.")
       return res.json({ loggedIn: true});
     }
     
@@ -81,6 +81,8 @@ app.get('/check-session', async (req: Request, res: Response): Promise<any> => {
 
 app.post('/admin-login', async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
+
+  console.log('Admin Login: ', req.body);
 
   if (!email || !password) {
     res.status(400).json({ error: 'Email and Password are required to continue' });
@@ -107,7 +109,7 @@ app.post('/admin-login', async (req: Request, res: Response): Promise<void> => {
     if (isUserExist && isPasswordValid) {
       const adminUserId = isUserExist.id;
       if (adminUserId !== undefined) {
-        req.session.loggedAdminUser = { id: adminUserId };
+        req.session.loggedAdminUser = { id: adminUserId, username: email };
         res.status(200).json({ message: 'Login successful!' });
       } else {
         console.error('User ID is undefined');
@@ -129,6 +131,7 @@ app.post('/admin-logout', async (req: Request, res: Response): Promise<any> => {
       console.error('Error destroying session:', err);
       res.status(500).json({ error: 'Internal server error' });
     } else {
+      res.clearCookie('connect.sid')
       res.status(200).json({ message: 'Logout successful!' });
     }
   });
