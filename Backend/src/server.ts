@@ -168,6 +168,11 @@ app.post('/admin-register', async (req: Request, res: Response): Promise<void> =
 
 });
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ message: 'Server is running' });
+});
+
 // Static Files for React
 //This tells your server to serve the static files (HTML, CSS, JS) that were built by your React app. These files are typically stored in the dist folder after running a build (npm run build).
 app.use(express.static(path.resolve(__dirname, '../../Frontend/dist')));
@@ -175,6 +180,12 @@ app.use(express.static(path.resolve(__dirname, '../../Frontend/dist')));
 //This is a "catch-all" route for any request that doesn’t match your backend API routes (like /jukeBox). It ensures that React handles the routing for all unknown paths (e.g., /dashboard, /profile).
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../../Frontend/dist/index.html'));
+});
+
+// Catch-all error handler
+app.use((err: any, req: Request, res: Response, next: Function) => {
+  console.error(err.stack);
+  res.status(500).send({ error: 'Something went wrong!' });
 });
 
 // Start the server
