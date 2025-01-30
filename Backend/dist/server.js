@@ -67,7 +67,7 @@ app.get('/check-session', (req, res) => __awaiter(void 0, void 0, void 0, functi
     console.log("You are now checking the session");
     try {
         if ((0, helperFunctions_1.default)(req.session)) {
-            console.log("isUserLoggedIn = TRUE");
+            console.log("A user is currently logged.");
             return res.json({ loggedIn: true });
         }
         res.json({ loggedIn: false });
@@ -79,6 +79,7 @@ app.get('/check-session', (req, res) => __awaiter(void 0, void 0, void 0, functi
 }));
 app.post('/admin-login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
+    console.log('Admin Login: ', req.body);
     if (!email || !password) {
         res.status(400).json({ error: 'Email and Password are required to continue' });
         return;
@@ -99,7 +100,7 @@ app.post('/admin-login', (req, res) => __awaiter(void 0, void 0, void 0, functio
         if (isUserExist && isPasswordValid) {
             const adminUserId = isUserExist.id;
             if (adminUserId !== undefined) {
-                req.session.loggedAdminUser = { id: adminUserId };
+                req.session.loggedAdminUser = { id: adminUserId, username: email };
                 res.status(200).json({ message: 'Login successful!' });
             }
             else {
@@ -123,6 +124,7 @@ app.post('/admin-logout', (req, res) => __awaiter(void 0, void 0, void 0, functi
             res.status(500).json({ error: 'Internal server error' });
         }
         else {
+            res.clearCookie('connect.sid');
             res.status(200).json({ message: 'Logout successful!' });
         }
     });

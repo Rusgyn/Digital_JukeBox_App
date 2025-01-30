@@ -1,5 +1,5 @@
 interface AdminSession {
-  loggedAdminUser: { id: number}
+  loggedAdminUser: { id: number }
 };
 
 export default AdminSession;
