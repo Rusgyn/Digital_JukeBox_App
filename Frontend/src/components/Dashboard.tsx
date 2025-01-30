@@ -16,7 +16,7 @@ const Dashboard = () => {
   const handleAdminLogoutNavigation = async() => {
     try {
       console.log('Sending logout request...');
-      const response = await axios.post('/admin-logout', {}, {withCredentials: true}); //Without "withCredentials: true", the browser will not include cookies, and the backend won’t recognize the session.
+      const response = await axios.post('/admin-logout', {}, {withCredentials: true}); // {} the request body, which is empty in this case. Without "withCredentials: true", the browser will not include cookies, and the backend won’t recognize the session.
       console.log('Logout response:', response);
       if (response.status === 200) {
         navigate('/');
