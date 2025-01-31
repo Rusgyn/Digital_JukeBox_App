@@ -143,11 +143,11 @@ app.post('/admin-register', (req, res) => __awaiter(void 0, void 0, void 0, func
             first_name: firstName,
             last_name: lastName,
             email,
-            password_digest: password, // Assuming password_digest is the hashed password
+            password_digest: password, // password_digest is the hashed password
             admin_role_id: role,
             created_at: new Date(),
             updated_at: new Date(),
-        };
+        }; //AdminUser types
         const addNewAdminUser = yield admin_users_1.default.addAdminUser(newAdminUser);
         console.log("New user added: ", addNewAdminUser);
         res.status(201).json(addNewAdminUser);

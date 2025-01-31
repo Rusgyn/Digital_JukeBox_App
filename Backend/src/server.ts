@@ -155,11 +155,11 @@ app.post('/admin-register', async (req: Request, res: Response): Promise<void> =
       first_name: firstName,
       last_name: lastName,
       email,
-      password_digest: password, // Assuming password_digest is the hashed password
+      password_digest: password, // password_digest is the hashed password
       admin_role_id: role,
       created_at: new Date(),
       updated_at: new Date(),
-    };
+    }; //AdminUser types
 
     const addNewAdminUser = await adminUserQueries.addAdminUser(newAdminUser);
     console.log("New user added: ", addNewAdminUser);

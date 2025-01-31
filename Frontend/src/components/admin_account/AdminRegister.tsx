@@ -29,7 +29,7 @@ const AdminRegister = () => {
           password,
           role
         }
-      );
+      );//input values
 
       console.log('Response is: ', response);
 
