@@ -8,7 +8,7 @@ import cors from 'cors';
 import dotenv from 'dotenv'; // Load env var from .env file into process.env
 import adminUserQueries from './db/queries/admin_users';
 import AdminUser from './types/AdminUserTypes';
-import isUserLoggedIn from './helpers/helperFunctions';
+import isUserLoggedIn from './utils/sessionUtils';
 
 const app = express();
 const PORT = 3001;

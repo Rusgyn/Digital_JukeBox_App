@@ -21,7 +21,7 @@ const database_1 = __importDefault(require("./db/database"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv")); // Load env var from .env file into process.env
 const admin_users_1 = __importDefault(require("./db/queries/admin_users"));
-const helperFunctions_1 = __importDefault(require("./helpers/helperFunctions"));
+const sessionUtils_1 = __importDefault(require("./utils/sessionUtils"));
 const app = (0, express_1.default)();
 const PORT = 3001;
 const saltRounds = 10;
@@ -66,7 +66,7 @@ app.get('/', (req, res) => {
 app.get('/check-session', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("You are now checking the session");
     try {
-        if ((0, helperFunctions_1.default)(req.session)) {
+        if ((0, sessionUtils_1.default)(req.session)) {
             console.log("A user is currently logged.");
             return res.json({ loggedIn: true });
         }
