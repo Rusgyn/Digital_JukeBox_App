@@ -67,7 +67,8 @@ app.get('/check-session', (req, res) => __awaiter(void 0, void 0, void 0, functi
     console.log("You are now checking the session");
     try {
         if ((0, sessionUtils_1.default)(req.session)) {
-            console.log("A user is currently logged.");
+            console.log("User is active. Session data: ", req.session);
+            console.log("=== END ===");
             return res.json({ loggedIn: true });
         }
         res.json({ loggedIn: false });
@@ -78,29 +79,35 @@ app.get('/check-session', (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 }));
 app.post('/admin-login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
-    console.log('Admin Login: ', req.body);
-    if (!email || !password) {
+    const { username, password } = req.body;
+    console.log('The Admin Login info: ', req.body);
+    console.log('=== END ===');
+    if (!username || !password) {
         res.status(400).json({ error: 'Email and Password are required to continue' });
         return;
     }
     try {
-        const isUserExist = yield admin_users_1.default.getAdminUserByEmail(email);
+        const isUserExist = yield admin_users_1.default.getAdminUserByEmail(username);
+        console.log("isUserExist data: ", isUserExist);
+        console.log("=== END ===");
         if (!isUserExist) {
-            console.log('User not found for email:', email);
+            console.log('User not found for email:', username);
             res.status(401).json({ error: 'Invalid credentials!' });
             return;
         }
         const isPasswordValid = yield bcryptjs_1.default.compare(password, isUserExist.password_digest);
         if (!isPasswordValid) {
-            console.log('Password does not match for email:', email);
+            console.log('Password does not match for email:', username);
             res.status(401).json({ error: 'Invalid credentials!' });
             return;
         }
         if (isUserExist && isPasswordValid) {
             const adminUserId = isUserExist.id;
+            const adminUserEmail = isUserExist.email;
             if (adminUserId !== undefined) {
-                req.session.loggedAdminUser = { id: adminUserId, username: email };
+                req.session.loggedAdminUser = { id: adminUserId, username: adminUserEmail };
+                console.log("loggedAdminUser is: ", req.session.loggedAdminUser);
+                console.log("=== END ===");
                 res.status(200).json({ message: 'Login successful!' });
             }
             else {
@@ -118,6 +125,7 @@ app.post('/admin-login', (req, res) => __awaiter(void 0, void 0, void 0, functio
 app.post('/admin-logout', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Logout route hit');
     console.log('Session data:', req.session);
+    console.log("====END====");
     req.session.destroy((err) => {
         if (err) {
             console.error('Error destroying session:', err);

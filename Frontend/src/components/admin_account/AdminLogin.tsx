@@ -34,12 +34,12 @@ const AdminLogin = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
         
-    console.log('The Login Request:', { email: username, password });
+    console.log('The Admin Login Request:', { u: username, p: password });
     
     try {
       const response = await axios.post('/jukeBox/admin-login', 
         {
-          email: username,
+          username,
           password
         } 
       );

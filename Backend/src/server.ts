@@ -67,7 +67,8 @@ app.get('/check-session', async (req: Request, res: Response): Promise<any> => {
 
   try {
     if(isUserLoggedIn(req.session)) {
-      console.log("A user is currently logged.")
+      console.log("User is active. Session data: ", req.session)
+      console.log("=== END ===");
       return res.json({ loggedIn: true});
     }
     
@@ -80,20 +81,22 @@ app.get('/check-session', async (req: Request, res: Response): Promise<any> => {
 });
 
 app.post('/admin-login', async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
-  console.log('Admin Login: ', req.body);
+  console.log('The Admin Login info: ', req.body);
+  console.log('=== END ===')
 
-  if (!email || !password) {
+  if (!username || !password) {
     res.status(400).json({ error: 'Email and Password are required to continue' });
     return;
   }
 
   try {
-    const isUserExist = await adminUserQueries.getAdminUserByEmail(email);
-
+    const isUserExist = await adminUserQueries.getAdminUserByEmail(username);
+    console.log("isUserExist data: ", isUserExist);
+    console.log("=== END ===");
     if (!isUserExist) {
-      console.log('User not found for email:', email);
+      console.log('User not found for email:', username);
       res.status(401).json({ error: 'Invalid credentials!' });
       return;
     }
@@ -101,15 +104,18 @@ app.post('/admin-login', async (req: Request, res: Response): Promise<void> => {
     const isPasswordValid = await bcrypt.compare(password, isUserExist.password_digest);
 
     if (!isPasswordValid) {
-      console.log('Password does not match for email:', email);
+      console.log('Password does not match for email:', username);
       res.status(401).json({ error: 'Invalid credentials!' });
       return;
     }
 
     if (isUserExist && isPasswordValid) {
       const adminUserId = isUserExist.id;
+      const adminUserEmail = isUserExist.email;
       if (adminUserId !== undefined) {
-        req.session.loggedAdminUser = { id: adminUserId, username: email };
+        req.session.loggedAdminUser = { id: adminUserId, username: adminUserEmail };
+        console.log("loggedAdminUser is: ", req.session.loggedAdminUser);
+        console.log("=== END ===");
         res.status(200).json({ message: 'Login successful!' });
       } else {
         console.error('User ID is undefined');
@@ -126,6 +132,7 @@ app.post('/admin-login', async (req: Request, res: Response): Promise<void> => {
 app.post('/admin-logout', async (req: Request, res: Response): Promise<any> => {
   console.log('Logout route hit');
   console.log('Session data:', req.session);
+  console.log("====END====")
   req.session.destroy((err) => {
     if (err) {
       console.error('Error destroying session:', err);
