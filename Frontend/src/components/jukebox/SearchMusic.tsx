@@ -58,6 +58,7 @@ const SearchMusic = () => {
                 <th>Title</th>
                 <th>Artist</th>
                 <th>Preview</th>
+                <th>Select</th>
               </tr>
             </thead>
             <tbody>
@@ -77,10 +78,13 @@ const SearchMusic = () => {
                       <source src={searchResult.preview} type="audio/mp3" />
                     </audio>  
                   </td>
+                  <td>
+                    <input type="checkbox" />
+                    ID: {searchResult.id}
+                  </td>
                 </tr>
               ))}
             </tbody>
-
           </table>
         </div>
       </div>
