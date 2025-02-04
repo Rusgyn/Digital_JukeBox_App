@@ -14,7 +14,7 @@ const Dashboard = () => {
   };
   
   const handleSearchMusicNavigation = () => {
-    navigate('/search-music');
+    navigate('/media-search');
   }
 
   const handleAdminLogoutNavigation = async() => {
