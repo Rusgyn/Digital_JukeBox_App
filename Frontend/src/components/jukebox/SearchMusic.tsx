@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import SearchResult from '../../../../Backend/src/types/jukeBox/searchMediaResultTypes';
@@ -8,10 +8,34 @@ const SearchMusic = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSessionChecked, setIsSessionChecked] = useState(false); //control rendering
+
+  // Check the session
+  useEffect(() => {
+    const checkSession = async() => {
+      try {
+        const response = await axios.get('/jukeBox/check-session', { withCredentials: true }); 
+
+        if (!response.data.loggedIn) {
+          navigate('/admin-login', { replace: true } );
+          return;
+        }
+
+      } catch (error) {
+        console.error("Error checking session Frontend: ", error);
+        navigate('/admin-login', { replace: true } );
+        return;
+      }
+      setIsSessionChecked(true); // Mark session is checked
+    }
+    
+    checkSession();
+  }, [navigate]);
 
   const handleDashboardNavigation = () => {
     navigate('/dashboard');
-  }
+  };
+
   const handleSearch = async() => {
 
     if (!searchQuery.trim()) {
@@ -27,12 +51,14 @@ const SearchMusic = () => {
         }
       })
       console.log("Search Music response: ", response.data);
-      setSearchResults(response.data.data);
+      setSearchResults(response.data.data || []);
       setSearchQuery("");
     } catch(error) {
       console.error('Error searching for music: ', error);
     }
   };
+
+  if (!isSessionChecked) return null; // it wont render until session is checked
 
   return (
     <div>

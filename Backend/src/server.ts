@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import path from 'path';
 import morgan from 'morgan';
 import bcrypt from 'bcryptjs';
@@ -55,7 +55,7 @@ if (sessionSecret) {
   // If the SESSION_SECRET is not set, a warning message
   console.warn('SESSION_SECRET is not set in the .env file. Please ensure it is defined for secure session handling.');
   process.exit(1); // terminate the app when secret is not found.
-}
+};
 
 // USER API Routes
 app.get('/', (req: Request, res: Response) => {
@@ -72,7 +72,7 @@ app.get('/check-session', async (req: Request, res: Response): Promise<any> => {
       console.log("=== END ===");
       return res.json({ loggedIn: true});
     }
-    
+    console.log("No active session, redirecting to login page")
     res.json({loggedIn: false})
   } catch (error) {
     console.error('Error checking session Backend:', error);

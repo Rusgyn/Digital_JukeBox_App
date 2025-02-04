@@ -60,6 +60,7 @@ else {
     console.warn('SESSION_SECRET is not set in the .env file. Please ensure it is defined for secure session handling.');
     process.exit(1); // terminate the app when secret is not found.
 }
+;
 // USER API Routes
 app.get('/', (req, res) => {
     res.send('Hello! Digital JukeBox App BackEnd is running!');
@@ -72,6 +73,7 @@ app.get('/check-session', (req, res) => __awaiter(void 0, void 0, void 0, functi
             console.log("=== END ===");
             return res.json({ loggedIn: true });
         }
+        console.log("No active session, redirecting to login page");
         res.json({ loggedIn: false });
     }
     catch (error) {
