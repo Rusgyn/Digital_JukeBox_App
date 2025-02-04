@@ -65,7 +65,11 @@ const SearchMusic = () => {
                   <td>{(index + 1).toString().padStart(3, '0')}</td>
                   <td>{searchResult.title}</td>
                   <td>{searchResult.artist.name}</td>
-                  <td>{searchResult.preview}</td>
+                  <td>
+                    <audio controls>
+                      <source src={searchResult.preview} type="audio/mp3" />
+                    </audio>  
+                  </td>
                 </tr>
               ))}
             </tbody>
