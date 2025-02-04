@@ -20,6 +20,7 @@ const express_session_1 = __importDefault(require("express-session"));
 const database_1 = __importDefault(require("./db/database"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv")); // Load env var from .env file into process.env
+const axios_1 = __importDefault(require("axios"));
 const admin_users_1 = __importDefault(require("./db/queries/admin_users"));
 const sessionUtils_1 = __importDefault(require("./utils/sessionUtils"));
 const app = (0, express_1.default)();
@@ -59,7 +60,8 @@ else {
     console.warn('SESSION_SECRET is not set in the .env file. Please ensure it is defined for secure session handling.');
     process.exit(1); // terminate the app when secret is not found.
 }
-// API Routes
+;
+// USER API Routes
 app.get('/', (req, res) => {
     res.send('Hello! Digital JukeBox App BackEnd is running!');
 });
@@ -71,6 +73,7 @@ app.get('/check-session', (req, res) => __awaiter(void 0, void 0, void 0, functi
             console.log("=== END ===");
             return res.json({ loggedIn: true });
         }
+        console.log("No active session, redirecting to login page");
         res.json({ loggedIn: false });
     }
     catch (error) {
@@ -165,6 +168,29 @@ app.post('/admin-register', (req, res) => __awaiter(void 0, void 0, void 0, func
         res.status(500).json({ error: 'Internal server error' });
     }
     ;
+}));
+//MUSIC API Routes
+app.get('/media-search', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { searchQuery } = req.query;
+    console.log("GET Media searchQuery is: ", searchQuery);
+    try {
+        const response = yield axios_1.default.get('https://deezerdevs-deezer.p.rapidapi.com/search', {
+            params: { q: searchQuery },
+            headers: {
+                'x-rapidapi-key': process.env.PGVITE_DEEZER_API_KEY,
+                'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com'
+            }
+        });
+        console.log("Searched Media: ", response.data);
+        return res.json(response.data); // { data: [data, ..] }
+    }
+    catch (error) {
+        console.error('Error checking session Backend:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}));
+app.post('/search-music', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Search Music Route");
 }));
 // Health check endpoint
 app.get('/health', (req, res) => {

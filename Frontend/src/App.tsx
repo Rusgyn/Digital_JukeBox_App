@@ -3,6 +3,7 @@ import AdminLogin from './components/admin_account/AdminLogin';
 import Dashboard from './components/Dashboard';
 import Main from './components/Main';
 import AdminRegister from './components/admin_account/AdminRegister'; 
+import SearchMusic from './components/jukeBox/SearchMusic';
 import './styles/App.scss';
 
 const App = () => {
@@ -14,6 +15,7 @@ const App = () => {
           <Route path="/dashboard" element={ <Dashboard /> } />
           <Route path="/admin-login" element= { <AdminLogin /> } />
           <Route path='/admin-register' element={ <AdminRegister /> } />
+          <Route path='/media-search' element={ <SearchMusic /> } />
         </Routes>
       </div>
 

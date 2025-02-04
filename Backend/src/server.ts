@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import path from 'path';
 import morgan from 'morgan';
 import bcrypt from 'bcryptjs';
@@ -6,6 +6,7 @@ import session from 'express-session';
 import db from './db/database';
 import cors from 'cors';
 import dotenv from 'dotenv'; // Load env var from .env file into process.env
+import axios from 'axios';
 import adminUserQueries from './db/queries/admin_users';
 import AdminUser from './types/AdminUserTypes';
 import isUserLoggedIn from './utils/sessionUtils';
@@ -54,9 +55,9 @@ if (sessionSecret) {
   // If the SESSION_SECRET is not set, a warning message
   console.warn('SESSION_SECRET is not set in the .env file. Please ensure it is defined for secure session handling.');
   process.exit(1); // terminate the app when secret is not found.
-}
+};
 
-// API Routes
+// USER API Routes
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello! Digital JukeBox App BackEnd is running!');
 });
@@ -71,7 +72,7 @@ app.get('/check-session', async (req: Request, res: Response): Promise<any> => {
       console.log("=== END ===");
       return res.json({ loggedIn: true});
     }
-    
+    console.log("No active session, redirecting to login page")
     res.json({loggedIn: false})
   } catch (error) {
     console.error('Error checking session Backend:', error);
@@ -177,6 +178,35 @@ app.post('/admin-register', async (req: Request, res: Response): Promise<void> =
   };
 
 });
+
+
+//MUSIC API Routes
+app.get('/media-search', async (req: Request, res: Response): Promise<any> => {
+  
+  const { searchQuery } = req.query;
+  console.log("GET Media searchQuery is: ", searchQuery);
+
+  try {
+    const response = await axios.get('https://deezerdevs-deezer.p.rapidapi.com/search', {
+      params: { q: searchQuery},
+      headers: {
+        'x-rapidapi-key': process.env.PGVITE_DEEZER_API_KEY,
+        'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com'
+      }
+    })
+    console.log("Searched Media: ", response.data);
+    return res.json(response.data); // { data: [data, ..] }
+    
+  } catch (error) {
+    console.error('Error checking session Backend:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/search-music', async (req: Request, res: Response): Promise<any> => {
+  console.log("Search Music Route");
+
+})
 
 // Health check endpoint
 app.get('/health', (req, res) => {

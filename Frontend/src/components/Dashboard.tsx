@@ -12,6 +12,10 @@ const Dashboard = () => {
   const handleRegisterNavigation = () => {
     navigate('/admin-register');
   };
+  
+  const handleSearchMusicNavigation = () => {
+    navigate('/media-search');
+  }
 
   const handleAdminLogoutNavigation = async() => {
     try {
@@ -43,6 +47,11 @@ const Dashboard = () => {
           type='button'
           value="register"
           onClick={handleRegisterNavigation}>Add admin user</button>
+        <button
+          className="dashboard__content__register_button"
+          type='button'
+          value="register"
+          onClick={handleSearchMusicNavigation}>Search Music</button>
         <button 
           className="dashboard__content__admin-logout_button"
           type='button'
