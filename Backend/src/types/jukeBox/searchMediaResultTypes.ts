@@ -1,4 +1,7 @@
 interface SearchMediaResult {
+  album: {
+    cover_small: string;
+  }
   title: string;
   artist: {
     name: string;
