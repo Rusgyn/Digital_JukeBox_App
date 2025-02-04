@@ -6,6 +6,7 @@ import session from 'express-session';
 import db from './db/database';
 import cors from 'cors';
 import dotenv from 'dotenv'; // Load env var from .env file into process.env
+import axios from 'axios';
 import adminUserQueries from './db/queries/admin_users';
 import AdminUser from './types/AdminUserTypes';
 import isUserLoggedIn from './utils/sessionUtils';
@@ -56,7 +57,7 @@ if (sessionSecret) {
   process.exit(1); // terminate the app when secret is not found.
 }
 
-// API Routes
+// USER API Routes
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello! Digital JukeBox App BackEnd is running!');
 });
@@ -177,6 +178,35 @@ app.post('/admin-register', async (req: Request, res: Response): Promise<void> =
   };
 
 });
+
+
+//MUSIC API Routes
+app.get('/media-search', async (req: Request, res: Response): Promise<any> => {
+  
+  const { searchQuery } = req.query;
+  console.log("GET Media searchQuery is: ", searchQuery);
+
+  try {
+    const response = await axios.get('https://deezerdevs-deezer.p.rapidapi.com/search', {
+      params: { q: searchQuery},
+      headers: {
+        'x-rapidapi-key': process.env.PGVITE_DEEZER_API_KEY,
+        'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com'
+      }
+    })
+    console.log("Searched Media: ", response.data);
+    return res.json(response.data); // { data: [data, ..] }
+    
+  } catch (error) {
+    console.error('Error checking session Backend:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.post('/search-music', async (req: Request, res: Response): Promise<any> => {
+  console.log("Search Music Route");
+
+})
 
 // Health check endpoint
 app.get('/health', (req, res) => {
