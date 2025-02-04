@@ -54,6 +54,7 @@ const SearchMusic = () => {
             <thead>
               <tr>
                 <th>#</th>
+                <th>Album</th>
                 <th>Title</th>
                 <th>Artist</th>
                 <th>Preview</th>
@@ -63,6 +64,12 @@ const SearchMusic = () => {
               {searchResults.map((searchResult, index) => (
                 <tr key={index}>
                   <td>{(index + 1).toString().padStart(3, '0')}</td>
+                  <td>
+                    <img 
+                      src={searchResult.album.cover_small}
+                      alt={searchResult.title}>
+                    </img>
+                  </td>
                   <td>{searchResult.title}</td>
                   <td>{searchResult.artist.name}</td>
                   <td>
