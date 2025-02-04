@@ -1,23 +1,22 @@
 import { useState } from "react";
 import axios from "axios";
-
-interface SearchResult {
-  title: string;
-  artist: {
-    name: string;
-  }
-  preview: string;
-}
+import { useNavigate } from 'react-router-dom';
+import SearchResult from '../../../../Backend/src/types/jukeBox/searchMediaResultTypes';
 
 const SearchMusic = () => {
 
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
 
+  const handleDashboardNavigation = () => {
+    navigate('/dashboard');
+  }
   const handleSearch = async() => {
 
     if (!searchQuery.trim()) {
       console.warn("Please enter a search term");
+      alert("Please enter a search term")
       return;
     }
     
@@ -47,6 +46,9 @@ const SearchMusic = () => {
         />
         <button
           onClick={handleSearch}>Search</button>
+        <button onClick={handleDashboardNavigation}>
+          Dashboard
+        </button>
         <div>
           <table>
             <thead>
