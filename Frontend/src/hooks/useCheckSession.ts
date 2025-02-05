@@ -31,3 +31,9 @@ const useCheckSession = () => {
 }
 
 export default useCheckSession;
+
+//NOTE:
+
+/**
+ * { withCredentials: true } = it is a configuration option provided by the axios library. A configuration option used to include credentials in cross-site requests, ensuring that authentication and session management work correctly
+ */
