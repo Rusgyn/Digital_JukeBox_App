@@ -9,6 +9,7 @@ const SearchMusic = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSessionChecked, setIsSessionChecked] = useState(false); //control rendering
+  const [loading, setLoading] = useState(false);//temporarily disable search while fetching.
 
   // Check the session
   useEffect(() => {
@@ -43,6 +44,8 @@ const SearchMusic = () => {
       alert("Please enter a search term")
       return;
     }
+
+    setLoading(true);
     
     try {
       const response = await axios.get('/jukeBox/media-search', {
@@ -50,15 +53,18 @@ const SearchMusic = () => {
           searchQuery
         }
       })
-      console.log("Search Music response: ", response.data);
+      console.log("Search Music response: ", response.data.data);
       setSearchResults(response.data.data || []);
       setSearchQuery("");
     } catch(error) {
       console.error('Error searching for music: ', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   if (!isSessionChecked) return null; // it wont render until session is checked
+  // if (!isResultCleared) return null;
 
   return (
     <div>
