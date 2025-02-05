@@ -1,8 +1,7 @@
 /** Admin login page */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import useCheckSession from '../../hooks/useCheckSession';
 import '../../styles/Admin/AdminLogin.scss';
 
 const AdminLogin = () => {
@@ -11,11 +10,22 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const isSessionChecked = useCheckSession();
+  // Check the session
+  useEffect(() => {
+    const checkSession = async() => {
+      try {
+        const response = await axios.get('/jukeBox/check-session', { withCredentials: true }); 
 
-  if (!isSessionChecked) {
-    return <div>Loading...</div>;
-  };
+        if (response.data.loggedIn) {
+          navigate('/dashboard');
+        }
+
+      } catch (error) {
+        console.error("Error checking session Frontend: ", error);
+      }
+    }
+    checkSession();
+  }, [navigate]);
 
   const handleMainNavigation = () => {
     navigate('/');
@@ -79,6 +89,8 @@ const AdminLogin = () => {
         </div>
         {error && <p className="error">{error}</p>}
       </form>
+{/* 
+      <button type='button' onClick={handleDashboardNavigation}>Dashboard</button> */}
       
       <button type='button' onClick={handleMainNavigation}>Main</button>
 
