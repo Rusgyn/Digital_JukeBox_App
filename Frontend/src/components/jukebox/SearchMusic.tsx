@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import SearchResult from '../../../../Backend/src/types/jukeBox/searchMediaResultTypes';
+import useCheckSession from '../../hooks/useCheckSession';
 
 const SearchMusic = () => {
 
@@ -9,29 +10,8 @@ const SearchMusic = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [clearedResult, setClearedResult] = useState(false);
-  const [isSessionChecked, setIsSessionChecked] = useState(false); //control rendering
-
-  // Check the session
-  useEffect(() => {
-    const checkSession = async() => {
-      try {
-        const response = await axios.get('/jukeBox/check-session', { withCredentials: true }); 
-
-        if (!response.data.loggedIn) {
-          navigate('/admin-login', { replace: true } );
-          return;
-        }
-
-      } catch (error) {
-        console.error("Error checking session Frontend: ", error);
-        navigate('/admin-login', { replace: true } );
-        return;
-      }
-      setIsSessionChecked(true); // Mark session is checked
-    }
-    
-    checkSession();
-  }, [navigate]);
+  
+  const isSessionChecked = useCheckSession();
 
   const handleDashboardNavigation = () => {
     navigate('/dashboard');
@@ -64,11 +44,10 @@ const SearchMusic = () => {
       }
     }, 200);
   };
-  
-  if (!isSessionChecked) return null; // it wont render until session is checked
 
   return (
     <div>
+      {isSessionChecked ? <p>Session Verified</p> : <p>Checking session...</p>}
       <h2> This is SearchMusic Component </h2>
       <div>
         <input
