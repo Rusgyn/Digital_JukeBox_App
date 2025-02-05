@@ -8,8 +8,8 @@ const SearchMusic = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [clearedResult, setClearedResult] = useState(false);
   const [isSessionChecked, setIsSessionChecked] = useState(false); //control rendering
-  const [loading, setLoading] = useState(false);//temporarily disable search while fetching.
 
   // Check the session
   useEffect(() => {
@@ -43,28 +43,29 @@ const SearchMusic = () => {
       console.warn("Please enter a search term");
       alert("Please enter a search term")
       return;
-    }
-
-    setLoading(true);
+    };
     
-    try {
-      const response = await axios.get('/jukeBox/media-search', {
-        params: {
-          searchQuery
-        }
-      })
-      console.log("Search Music response: ", response.data.data);
-      setSearchResults(response.data.data || []);
-      setSearchQuery("");
-    } catch(error) {
-      console.error('Error searching for music: ', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setClearedResult(true);
 
+    setTimeout( async()=> {
+      try {
+        const response = await axios.get('/jukeBox/media-search', {
+          params: {
+            searchQuery
+          }
+        })
+        console.log("Search Music response: ", response.data.data);
+        setSearchResults(response.data.data || []);
+        setSearchQuery("");  
+      } catch(error) {
+        console.error('Error searching for music: ', error);
+      } finally {
+        setClearedResult(false);
+      }
+    }, 200);
+  };
+  
   if (!isSessionChecked) return null; // it wont render until session is checked
-  // if (!isResultCleared) return null;
 
   return (
     <div>
@@ -94,28 +95,34 @@ const SearchMusic = () => {
               </tr>
             </thead>
             <tbody>
-              {searchResults.map((searchResult, index) => (
-                <tr key={index}>
-                  <td>{(index + 1).toString().padStart(3, '0')}</td>
-                  <td>
-                    <img 
-                      src={searchResult.album.cover_small}
-                      alt={searchResult.title}>
-                    </img>
-                  </td>
-                  <td>{searchResult.title}</td>
-                  <td>{searchResult.artist.name}</td>
-                  <td>
-                    <audio controls>
-                      <source src={searchResult.preview} type="audio/mp3" />
-                    </audio>  
-                  </td>
-                  <td>
-                    <input type="checkbox" />
-                    ID: {searchResult.id}
-                  </td>
+              {clearedResult ? (
+                <tr>
+                  <td colSpan={6}>Loading...</td>
                 </tr>
-              ))}
+              ) : (
+                searchResults.map((searchResult, index) => (
+                  <tr key={index}>
+                    <td>{(index + 1).toString().padStart(3, '0')}</td>
+                    <td>
+                      <img 
+                        src={searchResult.album.cover_small}
+                        alt={searchResult.title}>
+                      </img>
+                    </td>
+                    <td>{searchResult.title}</td>
+                    <td>{searchResult.artist.name}</td>
+                    <td>
+                      <audio controls>
+                        <source src={searchResult.preview} type="audio/mp3" />
+                      </audio>  
+                    </td>
+                    <td>
+                      <input type="checkbox" />
+                      ID: {searchResult.id}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
