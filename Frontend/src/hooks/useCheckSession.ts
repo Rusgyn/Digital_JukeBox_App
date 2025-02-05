@@ -29,6 +29,7 @@ const useCheckSession = () => {
     checkSession();
   }, [navigate]);
 
+  return isSessionChecked;
 };
 
 export default useCheckSession;
