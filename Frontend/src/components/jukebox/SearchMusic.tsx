@@ -13,6 +13,10 @@ const SearchMusic = () => {
   
   const isSessionChecked = useCheckSession();
 
+  if (!isSessionChecked) {
+    return <div>Loading...</div>;
+  };
+  
   const handleDashboardNavigation = () => {
     navigate('/dashboard');
   };

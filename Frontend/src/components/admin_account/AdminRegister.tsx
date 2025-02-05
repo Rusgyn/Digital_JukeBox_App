@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import useCheckSession from '../../hooks/useCheckSession';
 import '../../styles/Admin/AdminRegister.scss';
 
 const AdminRegister = () => {
@@ -11,6 +12,12 @@ const AdminRegister = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState(2);
+
+  const isSessionChecked = useCheckSession();
+
+  if (!isSessionChecked) {
+    return <div>Loading...</div>;
+  };
 
   const handleMainNavigation = () => {
     navigate('/dashboard');
