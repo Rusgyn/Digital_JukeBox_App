@@ -31,5 +31,5 @@ const updateSongLike = async (playlist: Playlist): Promise<Playlist> => {
 
 export default {
   getAllSongs,
-
+  updateSongLike
 }
