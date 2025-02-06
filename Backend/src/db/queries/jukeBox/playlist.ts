@@ -6,6 +6,17 @@ interface Playlist {
   song_like: number;
 };
 
+// Add song
+const addSong = async (playlist: Playlist): Promise<Playlist> => {
+  try {
+    const result = await db.query('INSERT INTO playlists (song_external_id) VALUES ($1) RETURNING *', [playlist.song_external_id]);
+    return result.rows[0] as Playlist;
+  } catch(error) {
+    console.error('Error adding song to the playlist: ', error);
+    throw error;
+  }
+};
+
 // Get all songs
 const getAllSongs = async (): Promise<Playlist[]> => {
   try {
@@ -48,7 +59,7 @@ const deleteTrack = async (playlist: Playlist): Promise<{ message: string }> => 
     const result = await db.query(queryString, [playlist.id]);
 
     if (result.rowCount === 0) {
-      return { message: `No song with ID# ${playlist.id} in the database.` };
+      return { message: `No song with ID# ${playlist.id} in the Playlist.` };
     }
 
     return { message: `Track with ID# ${playlist.id} deleted successfully.`};
@@ -60,6 +71,7 @@ const deleteTrack = async (playlist: Playlist): Promise<{ message: string }> => 
 }
 
 export default {
+  addSong,
   getAllSongs,
   updateSongLike,
   deletePlaylist,
