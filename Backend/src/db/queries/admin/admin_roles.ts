@@ -1,4 +1,4 @@
-import db from '../database';
+import db from "../../database";
 
 interface AdminRole {
   id: number;
@@ -22,7 +22,7 @@ const getAdminRoleById = async (adminRoleId: number): Promise<AdminRole> => {
     const result = await db.query('SELECT * FROM admin_roles WHERE is = $1;', [adminRoleId]);
     return result.rows[0] as AdminRole;
   } catch(error) {
-    console.error('Error fecthing admin role by id: ', error);
+    console.error('Error fetching admin role by id: ', error);
     throw error;
   }
 };
