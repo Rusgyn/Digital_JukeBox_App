@@ -7,7 +7,8 @@ import db from './db/database';
 import cors from 'cors';
 import dotenv from 'dotenv'; // Load env var from .env file into process.env
 import axios from 'axios';
-import adminUserQueries from './db/queries/admin_users';
+import adminUserQueries from './db/queries/admin/admin_users'
+//import adminUserQueries from './db/queries/admin_users';
 import AdminUser from './types/AdminUserTypes';
 import isUserLoggedIn from './utils/sessionUtils';
 
