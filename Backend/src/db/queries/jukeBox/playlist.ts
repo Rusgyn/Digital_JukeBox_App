@@ -29,7 +29,39 @@ const updateSongLike = async (playlist: Playlist): Promise<Playlist> => {
   }
 };
 
+// Delete Playlist
+const deletePlaylist = async (): Promise<{message: string}> => {
+  try {
+    const result = await db.query('TRUNCATE TABLE playlists RESTART IDENTITY;');
+    return { message: "Playlist cleared successfully" };
+  } catch(error) {
+    console.error('Error clearing the playlist. Error - ', error);
+    throw error;
+  }
+}
+
+// Delete the Track/song
+const deleteTrack = async (playlist: Playlist): Promise<{ message: string }> => {
+  try {
+    const queryString = 'DELETE FROM playlists WHERE id = $1;';
+
+    const result = await db.query(queryString, [playlist.id]);
+
+    if (result.rowCount === 0) {
+      return { message: `No song with ID# ${playlist.id} in the database.` };
+    }
+
+    return { message: `Track with ID# ${playlist.id} deleted successfully.`};
+
+  } catch(error) {
+    console.error('Error deleting the track/song. Error - ', error);
+    throw error;
+  }
+}
+
 export default {
   getAllSongs,
-  updateSongLike
+  updateSongLike,
+  deletePlaylist,
+  deleteTrack
 }
