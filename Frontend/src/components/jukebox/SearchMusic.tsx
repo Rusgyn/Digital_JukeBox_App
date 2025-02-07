@@ -2,7 +2,6 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import SearchResult from '../../../../Backend/src/types/jukeBox/searchMediaResultTypes';
-import useCheckSession from '../../auth/AuthGuard';
 
 const SearchMusic = () => {
 
@@ -10,12 +9,6 @@ const SearchMusic = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [clearedResult, setClearedResult] = useState(false);
-  
-  const isSessionChecked = useCheckSession();
-
-  if (!isSessionChecked) {
-    return <div>Loading...</div>;
-  };
   
   const handleDashboardNavigation = () => {
     navigate('/dashboard');
@@ -51,7 +44,6 @@ const SearchMusic = () => {
 
   return (
     <div>
-      {isSessionChecked ? <p>Session Verified</p> : <p>Checking session...</p>}
       <h2> This is SearchMusic Component </h2>
       <div>
         <input

@@ -1,15 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import useCheckSession from "../auth/AuthGuard";
 import '../styles/Dashboard.scss';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const isSessionChecked = useCheckSession();
-
-  if (!isSessionChecked) {
-    return <div>Loading...</div>;
-  };
 
   const handleMainNavigation = () => {
     navigate('/');
