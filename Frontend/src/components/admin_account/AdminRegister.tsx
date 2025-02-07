@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import useCheckSession from '../../hooks/useCheckSession';
+import useCheckSession from '../../auth/AuthGuard';
 import '../../styles/Admin/AdminRegister.scss';
 
 const AdminRegister = () => {

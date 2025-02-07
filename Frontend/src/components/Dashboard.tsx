@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import useCheckSession from "../hooks/useCheckSession";
+import useCheckSession from "../auth/AuthGuard";
 import '../styles/Dashboard.scss';
 
 const Dashboard = () => {
