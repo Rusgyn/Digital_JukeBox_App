@@ -110,6 +110,12 @@ const AdminRegister = () => {
         </div>
         {error && <p className="error">{error}</p>}
       </form>
+      <button 
+        className="#"
+        type='button'
+        value="back"
+        onClick={() => {navigate(-1)}}> Back {/* Go back prev page */}
+      </button>
       <div className='admin-register__dashboard_button'>
         <p onClick={handleMainNavigation}>
         Dashboard

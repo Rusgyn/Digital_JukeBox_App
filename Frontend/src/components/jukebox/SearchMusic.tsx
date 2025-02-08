@@ -45,6 +45,11 @@ const SearchMusic = () => {
   return (
     <div>
       <h2> This is SearchMusic Component </h2>
+      <button 
+          className="#"
+          type='button'
+          value='back'
+          onClick={() => {navigate(-1)}}>Back</button> {/* Go back prev page */}
       <div>
         <input
           type="text"
