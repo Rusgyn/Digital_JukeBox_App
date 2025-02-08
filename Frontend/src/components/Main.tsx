@@ -61,6 +61,11 @@ const Main = () => {
           <button 
             className="main__dashboard_login"
             type='button'
+            value="back"
+            onClick={() => {navigate(-1)}}>Back</button> {/* Go back prev page */}
+          <button 
+            className="main__dashboard_login"
+            type='button'
             value="logout"
             onClick={handleDashboardNavigation}>Dashboard</button>
           <button 

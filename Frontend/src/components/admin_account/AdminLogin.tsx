@@ -89,9 +89,14 @@ const AdminLogin = () => {
         </div>
         {error && <p className="error">{error}</p>}
       </form>
-{/* 
-      <button type='button' onClick={handleDashboardNavigation}>Dashboard</button> */}
-      
+
+      <button 
+        className="#"
+        type='button'
+        value="back"
+        onClick={() => {navigate(-1)}}> Back {/* Go back prev page */}
+      </button>
+       
       <button type='button' onClick={handleMainNavigation}>Main</button>
 
     </div>

@@ -37,6 +37,11 @@ const Dashboard = () => {
       <p>Click on the buttons below to navigate.</p>
 
       <div className="dashboard__content">
+        <button 
+          className="dashboard__content__admin-logout_button"
+          type='button'
+          value="back"
+          onClick={() => {navigate(-1)}}>Back</button> {/* Go back prev page */}
         <button
           className="dashboard__content__main_button"
           type='button'
