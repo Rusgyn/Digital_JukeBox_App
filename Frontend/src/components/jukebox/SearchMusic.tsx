@@ -53,7 +53,16 @@ const SearchMusic = () => {
   
   };
 
-  console.log("The Selected Songs: ", selectedSong);
+    // Add to jukeBox Playlist
+  const handleAddToPlaylist = () => {
+    if (selectedSong.length === 0) {
+      console.log("Please choose a song")
+      alert("Select a song/s");
+      return;
+    } 
+
+    console.log("You Click Add to Playlist button. The Selected Songs: ", selectedSong);
+  };
 
   // Sort the searchResults array by title
   const sortedSearchResults = sortTracksByTitle(searchResults);
@@ -128,6 +137,7 @@ const SearchMusic = () => {
             </tbody>
           </table>
         </div>
+        <button onClick={ handleAddToPlaylist }> Add to Playlist </button>
       </div>
     </div>
   );
