@@ -1,27 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-import SearchResult from '../../../../Backend/src/types/jukeBox/searchMediaResultTypes';
-
-interface SearchMusicInt {
-  result: any[];
-  id: number;
-  album: {
-    cover_small: string;
-  }
-  artist: {
-    name: string;
-  }
-  ext_id: number; //External API id
-  preview: string;
-  //title: string
-};
+import SearchMusicResult from '../../../../Backend/src/types/jukeBox/searchMusicResultTypes';
+import sortTracksByTitle from '../../utils/musicUtils'
 
 const SearchMusic = () => {
 
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchMusicResult[]>([]);
   const [clearedResult, setClearedResult] = useState(false);
   
   const handleDashboardNavigation = () => {
@@ -56,7 +43,8 @@ const SearchMusic = () => {
   };
 
   // Sort the searchResults array by title
-  const sortedSearchResults = searchResults.sort((a, b) => a.title.localeCompare(b.title));
+  // const sortedSearchResults = searchResults.sort((a, b) => a.title.localeCompare(b.title));
+  const sortedSearchResults = sortTracksByTitle(searchResults);
 
   return (
     <div>
@@ -117,7 +105,7 @@ const SearchMusic = () => {
                         type="checkbox"
                         id="selectedSong"
                         name="selectedSong"/>
-                      ID: {searchResult.id}
+                      ID: {searchResult.external_id}
                     </td>
                   </tr>
                 ))
