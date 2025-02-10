@@ -3,6 +3,20 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import SearchResult from '../../../../Backend/src/types/jukeBox/searchMediaResultTypes';
 
+interface SearchMusicInt {
+  result: any[];
+  id: number;
+  album: {
+    cover_small: string;
+  }
+  artist: {
+    name: string;
+  }
+  ext_id: number; //External API id
+  preview: string;
+  //title: string
+};
+
 const SearchMusic = () => {
 
   const navigate = useNavigate();
@@ -31,7 +45,6 @@ const SearchMusic = () => {
             searchQuery
           }
         })
-        console.log("Search Music response: ", response.data.data);
         setSearchResults(response.data.data || []);
         setSearchQuery("");  
       } catch(error) {
@@ -42,9 +55,12 @@ const SearchMusic = () => {
     }, 200);
   };
 
+  // Sort the searchResults array by title
+  const sortedSearchResults = searchResults.sort((a, b) => a.title.localeCompare(b.title));
+
   return (
     <div>
-      <h2> This is SearchMusic Component </h2>
+      <h2> SearchMusic Component </h2>
       <button 
           className="#"
           type='button'
@@ -67,11 +83,11 @@ const SearchMusic = () => {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Album</th>
+                <th>Cover</th>
                 <th>Title</th>
                 <th>Artist</th>
                 <th>Preview</th>
-                <th>Select</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -80,7 +96,7 @@ const SearchMusic = () => {
                   <td colSpan={6}>Loading...</td>
                 </tr>
               ) : (
-                searchResults.map((searchResult, index) => (
+                sortedSearchResults.map((searchResult, index) => (
                   <tr key={index}>
                     <td>{(index + 1).toString().padStart(3, '0')}</td>
                     <td>
@@ -97,7 +113,10 @@ const SearchMusic = () => {
                       </audio>  
                     </td>
                     <td>
-                      <input type="checkbox" />
+                      <input 
+                        type="checkbox"
+                        id="selectedSong"
+                        name="selectedSong"/>
                       ID: {searchResult.id}
                     </td>
                   </tr>
