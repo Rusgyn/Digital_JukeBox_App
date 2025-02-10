@@ -5,7 +5,7 @@ interface SearchMusicResult {
   artist: {
     name: string;
   }
-  external_id: number; //External API id,
+  id: number; //External API id. e.g. id: 2542703
   preview: string;
   title: string;
 }

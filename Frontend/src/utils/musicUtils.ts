@@ -2,7 +2,7 @@
 
 import SearchMusicResult from "../../../Backend/src/types/jukeBox/searchMusicResultTypes";
 
-// Sorted Music by title
+// Sorted Music Tracks by title
 const sortTracksByTitle = (music: SearchMusicResult[]) => {
   return music.sort((a, b) => a.title.localeCompare(b.title));
 };

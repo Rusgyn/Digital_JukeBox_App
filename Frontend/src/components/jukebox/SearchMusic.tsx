@@ -43,7 +43,6 @@ const SearchMusic = () => {
   };
 
   // Sort the searchResults array by title
-  // const sortedSearchResults = searchResults.sort((a, b) => a.title.localeCompare(b.title));
   const sortedSearchResults = sortTracksByTitle(searchResults);
 
   return (
@@ -105,7 +104,7 @@ const SearchMusic = () => {
                         type="checkbox"
                         id="selectedSong"
                         name="selectedSong"/>
-                      ID: {searchResult.external_id}
+                      ID: {searchResult.id} {/* This is an External ID */}
                     </td>
                   </tr>
                 ))
