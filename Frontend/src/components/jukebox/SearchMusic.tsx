@@ -10,7 +10,8 @@ const SearchMusic = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchMusicResult[]>([]);
   const [clearedResult, setClearedResult] = useState(false);
-  const [selectedSong, setSelectedSong] = useState(false);
+  const [selectedSong, setSelectedSong] = useState([]); //temp storage of selected song/s
+  const [isSongSelected, setIsSongSelected] = useState(false); // condition that checks the song checkbox.
   
   const handleDashboardNavigation = () => {
     navigate('/dashboard');
@@ -45,7 +46,7 @@ const SearchMusic = () => {
 
   const handleSelectedSong = (e: any) => {
     console.log("handleSelectedSong => ", e.target.checked);
-    setSelectedSong(e.target.checked);
+    setIsSongSelected(e.target.checked);
 
   }
 
@@ -111,7 +112,8 @@ const SearchMusic = () => {
                         type="checkbox"
                         id="selectedSong"
                         name="selectedSong"
-                        checked={selectedSong} 
+                        checked={isSongSelected}
+                        value={searchResult.id}
                         onChange={handleSelectedSong}/>
                       ID: {searchResult.id} {/* This is an External ID */}
                     </td>
