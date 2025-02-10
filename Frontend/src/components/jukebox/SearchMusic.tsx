@@ -10,6 +10,7 @@ const SearchMusic = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchMusicResult[]>([]);
   const [clearedResult, setClearedResult] = useState(false);
+  const [selectedSong, setSelectedSong] = useState(false);
   
   const handleDashboardNavigation = () => {
     navigate('/dashboard');
@@ -41,6 +42,12 @@ const SearchMusic = () => {
       }
     }, 200);
   };
+
+  const handleSelectedSong = (e: any) => {
+    console.log("handleSelectedSong => ", e.target.checked);
+    setSelectedSong(e.target.checked);
+
+  }
 
   // Sort the searchResults array by title
   const sortedSearchResults = sortTracksByTitle(searchResults);
@@ -103,7 +110,9 @@ const SearchMusic = () => {
                       <input 
                         type="checkbox"
                         id="selectedSong"
-                        name="selectedSong"/>
+                        name="selectedSong"
+                        checked={selectedSong} 
+                        onChange={handleSelectedSong}/>
                       ID: {searchResult.id} {/* This is an External ID */}
                     </td>
                   </tr>
