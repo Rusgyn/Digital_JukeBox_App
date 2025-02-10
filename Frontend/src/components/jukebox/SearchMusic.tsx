@@ -10,9 +10,8 @@ const SearchMusic = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchMusicResult[]>([]);
   const [clearedResult, setClearedResult] = useState(false);
-  const [selectedSong, setSelectedSong] = useState([]); //temp storage of selected song/s
-  const [isSongSelected, setIsSongSelected] = useState(false); // condition that checks the song checkbox.
-  
+  const [selectedSong, setSelectedSong] = useState<number[]>([]); //storage of selected song/s
+   
   const handleDashboardNavigation = () => {
     navigate('/dashboard');
   };
@@ -44,11 +43,17 @@ const SearchMusic = () => {
     }, 200);
   };
 
-  const handleSelectedSong = (e: any) => {
-    console.log("handleSelectedSong => ", e.target.checked);
-    setIsSongSelected(e.target.checked);
+  const handleSelectedSong = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isSongSelected = e.target.checked; // => boolean
+    const newSelectedSong = parseInt(e.target.value); //convert ID to number. Checkbox Value attribute has "string" typeOf hence convert.
+    
+    isSongSelected ?
+      setSelectedSong( [...selectedSong, newSelectedSong] ) : 
+      setSelectedSong(selectedSong.filter((songId) => songId !== newSelectedSong));
+  
+  };
 
-  }
+  console.log("The Selected Songs: ", selectedSong);
 
   // Sort the searchResults array by title
   const sortedSearchResults = sortTracksByTitle(searchResults);
@@ -112,7 +117,7 @@ const SearchMusic = () => {
                         type="checkbox"
                         id="selectedSong"
                         name="selectedSong"
-                        checked={isSongSelected}
+                        checked={selectedSong.includes(searchResult.id)}
                         value={searchResult.id}
                         onChange={handleSelectedSong}/>
                       ID: {searchResult.id} {/* This is an External ID */}
