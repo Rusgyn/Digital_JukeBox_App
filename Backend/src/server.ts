@@ -234,7 +234,7 @@ app.post('/add-music', async (req: Request, res: Response): Promise<void> => {
 
       const addNewSong = await playlistQueries.addSong(newPlaylist);
       console.log("New song added: ", addNewSong);
-      addedSongs.push(song_ext_id);
+      addedSongs.push(addNewSong);
     };
 
     res.status(201).json( { addedSongs, skippedSongs });

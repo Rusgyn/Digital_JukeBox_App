@@ -215,7 +215,7 @@ app.post('/add-music', (req, res) => __awaiter(void 0, void 0, void 0, function*
             }; //Playlist types
             const addNewSong = yield playlist_1.default.addSong(newPlaylist);
             console.log("New song added: ", addNewSong);
-            addedSongs.push(song_ext_id);
+            addedSongs.push(addNewSong);
         }
         ;
         res.status(201).json({ addedSongs, skippedSongs });
