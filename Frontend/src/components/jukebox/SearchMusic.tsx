@@ -50,14 +50,13 @@ const SearchMusic = () => {
     //const newSelectedSong = parseInt(e.target.value); //convert ID to number. Checkbox Value attribute has "string" typeOf hence convert.
 
     const newSelectedSong: SelectedSong = {
-      id: parseInt(e.target.value),
-      title: ???,
+      id: song.id,
+      title: song.title,
     };
-
     
     isSongSelected ?
       setSelectedSong( [...selectedSong, newSelectedSong] ) : 
-      setSelectedSong(selectedSong.filter((songId) => songId !== newSelectedSong));
+      setSelectedSong(selectedSong.filter((song) => song.id !== newSelectedSong.id));
   
   };
 
@@ -151,11 +150,15 @@ const SearchMusic = () => {
                     <td>
                       <input 
                         type="checkbox"
-                        id="selectedSong"
+                        id={`selectedSong-${searchResult.id}`}
                         name="selectedSong"
-                        checked={selectedSong.includes(searchResult.id)}
+                        checked={
+                          selectedSong.some((song) => {
+                            song.id === searchResult.id 
+                          })
+                        }
                         value={searchResult.id}
-                        onChange={handleSelectedSong}/>
+                        onChange={(e) => handleSelectedSong(e, searchResult)}/>
                       ID: {searchResult.id} {/* This is an External ID */}
                     </td>
                   </tr>
