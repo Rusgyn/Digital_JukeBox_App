@@ -69,12 +69,14 @@ const SearchMusic = () => {
 
       setSelectedSong([]); //clear the selected song/s after post
 
-      console.log("Request is now complete");
+      console.log("Request is now complete: ", response.data);
+
       if (response.status === 201) {
-        setSearchResults([]); // clear the result page after post
+        setSearchResults([]); // clear the result page when success.
         navigate('/media-search');
       }
-      return response.data;
+
+      //return response.data; // *This can be used for future enhancement.
     } catch (error: any) {
       console.error('Error occurred while adding song/s to Playlist: ', error);
       throw new Error ('An error occurred. Please try again.');
