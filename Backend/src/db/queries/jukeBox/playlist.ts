@@ -1,5 +1,5 @@
-import Playlist from "../../../types/jukeBox/PlaylistTypes";
 import db from "../../database";
+import { Playlist } from '../../../types/jukeBox/playlistTypes';
 
 // Add song
 const addSong = async (playlist: Playlist): Promise<Playlist> => {

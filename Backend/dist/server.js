@@ -199,7 +199,7 @@ app.post('/add-music', (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const addedSongs = [];
         const skippedSongs = [];
-        for (const song_ext_id of selectedSong) {
+        for (const song_ext_id of selectedSong) { //
             const isSongExist = yield playlist_1.default.getSongByExternalId(song_ext_id);
             if (isSongExist) {
                 console.log('Song already exist with external_id: ', song_ext_id);
@@ -208,7 +208,8 @@ app.post('/add-music', (req, res) => __awaiter(void 0, void 0, void 0, function*
             }
             ;
             const newPlaylist = {
-                song_external_id: song_ext_id,
+                song_external_id: song.ext_id, //
+                title: song.title, //
                 song_like: 0,
                 created_at: new Date(),
                 updated_at: new Date()

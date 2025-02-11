@@ -11,8 +11,8 @@ import axios from 'axios';
 import adminUserQueries from './db/queries/admin/admin_users';
 import playlistQueries from './db/queries/jukeBox/playlist';
 /* Types */
-import AdminUser from './types/admin/AdminUserTypes';
-import Playlist from './types/jukeBox/PlaylistTypes';
+import AdminUser from './types/admin/adminUserTypes';
+import { Playlist, SelectedSong } from './types/jukeBox/playlistTypes';
 /* Utilities */
 import isUserLoggedIn from './utils/sessionUtils';
 
@@ -216,7 +216,7 @@ app.post('/add-music', async (req: Request, res: Response): Promise<void> => {
     const addedSongs = [];
     const skippedSongs = [];
 
-    for (const song_ext_id of selectedSong) {
+    for (const song_ext_id of selectedSong) { //
       const isSongExist = await playlistQueries.getSongByExternalId(song_ext_id);
 
       if (isSongExist) {
@@ -226,7 +226,8 @@ app.post('/add-music', async (req: Request, res: Response): Promise<void> => {
       };
 
       const newPlaylist: Playlist = {
-        song_external_id: song_ext_id,
+        song_external_id: song.ext_id, //
+        title: song.title, //
         song_like: 0,
         created_at: new Date(),
         updated_at: new Date()

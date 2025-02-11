@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import SearchMusicResult from '../../../../Backend/src/types/jukeBox/searchMusicResultTypes';
+import { SelectedSong } from '../../../../Backend/src/types/jukeBox/playlistTypes';
 import sortTracksByTitle from '../../utils/musicUtils'
 
 const SearchMusic = () => {
@@ -10,7 +11,8 @@ const SearchMusic = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchMusicResult[]>([]);
   const [clearedResult, setClearedResult] = useState(false);
-  const [selectedSong, setSelectedSong] = useState<number[]>([]); //storage of selected song/s
+  //const [selectedSong, setSelectedSong] = useState<number[]>([]); //storage of selected song/s
+  const [selectedSong, setSelectedSong] = useState<SelectedSong[]>([]);
    
   const handleDashboardNavigation = () => {
     navigate('/dashboard');
@@ -45,7 +47,13 @@ const SearchMusic = () => {
 
   const handleSelectedSong = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isSongSelected = e.target.checked; // => boolean
-    const newSelectedSong = parseInt(e.target.value); //convert ID to number. Checkbox Value attribute has "string" typeOf hence convert.
+    //const newSelectedSong = parseInt(e.target.value); //convert ID to number. Checkbox Value attribute has "string" typeOf hence convert.
+
+    const newSelectedSong: SelectedSong = {
+      id: parseInt(e.target.value),
+      title: ???,
+    };
+
     
     isSongSelected ?
       setSelectedSong( [...selectedSong, newSelectedSong] ) : 

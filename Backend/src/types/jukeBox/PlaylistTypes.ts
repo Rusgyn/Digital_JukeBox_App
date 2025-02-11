@@ -1,4 +1,4 @@
-interface Playlist {
+export interface Playlist {
   id?: number;
   song_external_id: number;
   title: string;
@@ -7,4 +7,7 @@ interface Playlist {
   updated_at: Date;
 };
 
-export default Playlist;
+export interface SelectedSong {
+  id: number; //external API id number from Search result
+  title: string;
+};
