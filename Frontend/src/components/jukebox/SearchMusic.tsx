@@ -3,15 +3,17 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import SearchMusicResult from '../../../../Backend/src/types/jukeBox/searchMusicResultTypes';
 import { SelectedSong } from '../../../../Backend/src/types/jukeBox/playlistTypes';
-import sortTracksByTitle from '../../utils/musicUtils'
+import sortTracksByTitle from '../../utils/musicUtils';
+import useSongPreview from "../../utils/audioUtils";
+import { FaPlay, FaPause } from "react-icons/fa";
 
 const SearchMusic = () => {
 
   const navigate = useNavigate();
+  const { handlePlay, playingTrack } = useSongPreview(); // Use the preview function
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchMusicResult[]>([]);
   const [clearedResult, setClearedResult] = useState(false);
-  //const [selectedSong, setSelectedSong] = useState<number[]>([]); //storage of selected song/s
   const [selectedSong, setSelectedSong] = useState<SelectedSong[]>([]);
    
   const handleDashboardNavigation = () => {
@@ -148,9 +150,9 @@ const SearchMusic = () => {
                     <td>{searchResult.title}</td>
                     <td>{searchResult.artist.name}</td>
                     <td>
-                      <audio controls>
-                        <source src={searchResult.preview} type="audio/mp3" />
-                      </audio>  
+                      <button onClick={() => handlePlay(searchResult.preview)}>
+                        {playingTrack === searchResult.preview ? <FaPause /> : <FaPlay />}
+                      </button>
                     </td>
                     <td>
                       <input 
