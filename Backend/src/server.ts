@@ -1,4 +1,4 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import path from 'path';
 import morgan from 'morgan';
 import bcrypt from 'bcryptjs';
@@ -7,12 +7,14 @@ import db from './db/database';
 import cors from 'cors';
 import dotenv from 'dotenv'; // Load env var from .env file into process.env
 import axios from 'axios';
+/* Queries */
 import adminUserQueries from './db/queries/admin/admin_users';
 import playlistQueries from './db/queries/jukeBox/playlist';
-import AdminUser from './types/AdminUserTypes';
+/* Types */
+import AdminUser from './types/admin/AdminUserTypes';
 import Playlist from './types/jukeBox/PlaylistTypes';
+/* Utilities */
 import isUserLoggedIn from './utils/sessionUtils';
-import SearchMusicResult from './types/jukeBox/searchMusicResultTypes';
 
 const app = express();
 const PORT = 3001;
@@ -181,7 +183,6 @@ app.post('/admin-register', async (req: Request, res: Response): Promise<void> =
   };
 
 });
-
 
 //MUSIC API Routes
 app.get('/media-search', async (req: Request, res: Response): Promise<any> => {

@@ -21,8 +21,10 @@ const database_1 = __importDefault(require("./db/database"));
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv")); // Load env var from .env file into process.env
 const axios_1 = __importDefault(require("axios"));
+/* Queries */
 const admin_users_1 = __importDefault(require("./db/queries/admin/admin_users"));
 const playlist_1 = __importDefault(require("./db/queries/jukeBox/playlist"));
+/* Utilities */
 const sessionUtils_1 = __importDefault(require("./utils/sessionUtils"));
 const app = (0, express_1.default)();
 const PORT = 3001;
