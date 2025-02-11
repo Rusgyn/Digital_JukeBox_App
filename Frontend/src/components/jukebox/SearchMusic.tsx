@@ -48,16 +48,20 @@ const SearchMusic = () => {
   const handleSelectedSong = (e: React.ChangeEvent<HTMLInputElement>, song: SearchMusicResult) => {
     const isSongSelected = e.target.checked; // => boolean
     //const newSelectedSong = parseInt(e.target.value); //convert ID to number. Checkbox Value attribute has "string" typeOf hence convert.
+    console.log("Is Checkbox checked: ", isSongSelected);
 
     const newSelectedSong: SelectedSong = {
       id: song.id,
       title: song.title,
     };
+
+    console.log("The newSelectedSong is: ", newSelectedSong);
     
-    isSongSelected ?
-      setSelectedSong( [...selectedSong, newSelectedSong] ) : 
+    if (isSongSelected) {
+      setSelectedSong( [...selectedSong, newSelectedSong] );
+    } else {
       setSelectedSong(selectedSong.filter((song) => song.id !== newSelectedSong.id));
-  
+    };  
   };
 
     // Add to jukeBox Playlist
@@ -153,9 +157,8 @@ const SearchMusic = () => {
                         id={`selectedSong-${searchResult.id}`}
                         name="selectedSong"
                         checked={
-                          selectedSong.some((song) => {
-                            song.id === searchResult.id 
-                          })
+                          selectedSong.some((song) => 
+                            song.id === searchResult.id )
                         }
                         value={searchResult.id}
                         onChange={(e) => handleSelectedSong(e, searchResult)}/>
