@@ -197,12 +197,14 @@ app.post('/add-music', (req, res) => __awaiter(void 0, void 0, void 0, function*
     const { selectedSong } = req.body;
     console.log("Add-music route. req body: ", selectedSong);
     try {
+        const addedSongs = [];
+        const skippedSongs = [];
         for (const song_ext_id of selectedSong) {
             const isSongExist = yield playlist_1.default.getSongByExternalId(song_ext_id);
             if (isSongExist) {
                 console.log('Song already exist with external_id: ', song_ext_id);
-                res.status(400).json({ error: 'Song already exists!' });
-                return;
+                skippedSongs.push(song_ext_id);
+                continue;
             }
             ;
             const newPlaylist = {
@@ -213,8 +215,10 @@ app.post('/add-music', (req, res) => __awaiter(void 0, void 0, void 0, function*
             }; //Playlist types
             const addNewSong = yield playlist_1.default.addSong(newPlaylist);
             console.log("New song added: ", addNewSong);
-            res.status(201).json(addNewSong);
+            addedSongs.push(song_ext_id);
         }
+        ;
+        res.status(201).json({ addedSongs, skippedSongs });
     }
     catch (error) {
         console.log('Error adding a new song: ', error);
