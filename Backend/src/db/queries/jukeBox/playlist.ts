@@ -1,10 +1,5 @@
+import Playlist from "../../../types/jukeBox/PlaylistTypes";
 import db from "../../database";
-
-interface Playlist {
-  id: number;
-  song_external_id: number;
-  song_like: number;
-};
 
 // Add song
 const addSong = async (playlist: Playlist): Promise<Playlist> => {
@@ -27,6 +22,17 @@ const getAllSongs = async (): Promise<Playlist[]> => {
     throw error;
   }
 };
+
+// Get song by external id
+const getSongByExternalId = async (song_ext_id: number): Promise<Playlist> => {
+  try {
+    const result = await db.query('SELECT * FROM playlists WHERE song_external_id = $1', [song_ext_id]);
+    return result.rows[0] as Playlist;
+  } catch (error) {
+    console.error (`Error fetching song with external ID ${song_ext_id}`);
+    throw error;
+  }
+}
 
 // Update number of likes
 const updateSongLike = async (playlist: Playlist): Promise<Playlist> => {
@@ -73,6 +79,7 @@ const deleteTrack = async (playlist: Playlist): Promise<{ message: string }> => 
 export default {
   addSong,
   getAllSongs,
+  getSongByExternalId,
   updateSongLike,
   deletePlaylist,
   deleteTrack

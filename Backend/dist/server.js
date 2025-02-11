@@ -22,6 +22,7 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv")); // Load env var from .env file into process.env
 const axios_1 = __importDefault(require("axios"));
 const admin_users_1 = __importDefault(require("./db/queries/admin/admin_users"));
+const playlist_1 = __importDefault(require("./db/queries/jukeBox/playlist"));
 const sessionUtils_1 = __importDefault(require("./utils/sessionUtils"));
 const app = (0, express_1.default)();
 const PORT = 3001;
@@ -172,7 +173,7 @@ app.post('/admin-register', (req, res) => __awaiter(void 0, void 0, void 0, func
 //MUSIC API Routes
 app.get('/media-search', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { searchQuery } = req.query;
-    console.log("GET Media searchQuery is: ", searchQuery);
+    //console.log("GET Media searchQuery is: ", searchQuery);
     try {
         const response = yield axios_1.default.get('https://deezerdevs-deezer.p.rapidapi.com/search', {
             params: { q: searchQuery },
@@ -181,16 +182,43 @@ app.get('/media-search', (req, res) => __awaiter(void 0, void 0, void 0, functio
                 'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com'
             }
         });
-        console.log("Searched Media: ", response.data);
+        //console.log("Searched Media: ", response.data);
         return res.json(response.data); // { data: [data, ..] }
     }
     catch (error) {
-        console.error('Error checking session Backend:', error);
+        //console.error('Error checking session Backend:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
 }));
-app.post('/search-music', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.post('/add-music', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("Search Music Route");
+    const { selectedSong } = req.body;
+    console.log("Add-music route. req body: ", selectedSong);
+    try {
+        for (const song_ext_id of selectedSong) {
+            const isSongExist = yield playlist_1.default.getSongByExternalId(song_ext_id);
+            if (isSongExist) {
+                console.log('Song already exist with external_id: ', song_ext_id);
+                res.status(400).json({ error: 'Song already exists!' });
+                return;
+            }
+            ;
+            const newPlaylist = {
+                song_external_id: song_ext_id,
+                song_like: 0,
+                created_at: new Date(),
+                updated_at: new Date()
+            }; //Playlist types
+            const addNewSong = yield playlist_1.default.addSong(newPlaylist);
+            console.log("New song added: ", addNewSong);
+            res.status(201).json(addNewSong);
+        }
+    }
+    catch (error) {
+        console.log('Error adding a new song: ', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+    ;
 }));
 // Health check endpoint
 app.get('/health', (req, res) => {

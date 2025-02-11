@@ -1,15 +1,17 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
-import SearchResult from '../../../../Backend/src/types/jukeBox/searchMediaResultTypes';
+import SearchMusicResult from '../../../../Backend/src/types/jukeBox/searchMusicResultTypes';
+import sortTracksByTitle from '../../utils/musicUtils'
 
 const SearchMusic = () => {
 
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchMusicResult[]>([]);
   const [clearedResult, setClearedResult] = useState(false);
-  
+  const [selectedSong, setSelectedSong] = useState<number[]>([]); //storage of selected song/s
+   
   const handleDashboardNavigation = () => {
     navigate('/dashboard');
   };
@@ -31,7 +33,6 @@ const SearchMusic = () => {
             searchQuery
           }
         })
-        console.log("Search Music response: ", response.data.data);
         setSearchResults(response.data.data || []);
         setSearchQuery("");  
       } catch(error) {
@@ -42,9 +43,50 @@ const SearchMusic = () => {
     }, 200);
   };
 
+  const handleSelectedSong = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isSongSelected = e.target.checked; // => boolean
+    const newSelectedSong = parseInt(e.target.value); //convert ID to number. Checkbox Value attribute has "string" typeOf hence convert.
+    
+    isSongSelected ?
+      setSelectedSong( [...selectedSong, newSelectedSong] ) : 
+      setSelectedSong(selectedSong.filter((songId) => songId !== newSelectedSong));
+  
+  };
+
+    // Add to jukeBox Playlist
+  const handleAddToPlaylist = async() => {
+
+    if (selectedSong.length === 0) {
+      console.log("Please choose a song")
+      alert("Select a song/s");
+      return;
+    };
+
+    try {
+      const response = await axios.post('/jukeBox/add-music', {
+        selectedSong
+      });
+
+      setSelectedSong([]); //clear the selected song/s after post
+
+      console.log("Request is now complete");
+      if (response.status === 201) {
+        setSearchResults([]); // clear the result page after post
+        navigate('/media-search');
+      }
+      return response.data;
+    } catch (error: any) {
+      console.error('Error occurred while adding song/s to Playlist: ', error);
+      throw new Error ('An error occurred. Please try again.');
+    }
+  };
+
+  // Sort the searchResults array by title
+  const sortedSearchResults = sortTracksByTitle(searchResults);
+
   return (
     <div>
-      <h2> This is SearchMusic Component </h2>
+      <h2> SearchMusic Component </h2>
       <button 
           className="#"
           type='button'
@@ -67,11 +109,11 @@ const SearchMusic = () => {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Album</th>
+                <th>Cover</th>
                 <th>Title</th>
                 <th>Artist</th>
                 <th>Preview</th>
-                <th>Select</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -80,7 +122,7 @@ const SearchMusic = () => {
                   <td colSpan={6}>Loading...</td>
                 </tr>
               ) : (
-                searchResults.map((searchResult, index) => (
+                sortedSearchResults.map((searchResult, index) => (
                   <tr key={index}>
                     <td>{(index + 1).toString().padStart(3, '0')}</td>
                     <td>
@@ -97,8 +139,14 @@ const SearchMusic = () => {
                       </audio>  
                     </td>
                     <td>
-                      <input type="checkbox" />
-                      ID: {searchResult.id}
+                      <input 
+                        type="checkbox"
+                        id="selectedSong"
+                        name="selectedSong"
+                        checked={selectedSong.includes(searchResult.id)}
+                        value={searchResult.id}
+                        onChange={handleSelectedSong}/>
+                      ID: {searchResult.id} {/* This is an External ID */}
                     </td>
                   </tr>
                 ))
@@ -106,6 +154,7 @@ const SearchMusic = () => {
             </tbody>
           </table>
         </div>
+        <button onClick={ handleAddToPlaylist }> Add to Playlist </button>
       </div>
     </div>
   );

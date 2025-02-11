@@ -7,10 +7,12 @@ import db from './db/database';
 import cors from 'cors';
 import dotenv from 'dotenv'; // Load env var from .env file into process.env
 import axios from 'axios';
-import adminUserQueries from './db/queries/admin/admin_users'
-//import adminUserQueries from './db/queries/admin_users';
+import adminUserQueries from './db/queries/admin/admin_users';
+import playlistQueries from './db/queries/jukeBox/playlist';
 import AdminUser from './types/AdminUserTypes';
+import Playlist from './types/jukeBox/PlaylistTypes';
 import isUserLoggedIn from './utils/sessionUtils';
+import SearchMusicResult from './types/jukeBox/searchMusicResultTypes';
 
 const app = express();
 const PORT = 3001;
@@ -185,7 +187,7 @@ app.post('/admin-register', async (req: Request, res: Response): Promise<void> =
 app.get('/media-search', async (req: Request, res: Response): Promise<any> => {
   
   const { searchQuery } = req.query;
-  console.log("GET Media searchQuery is: ", searchQuery);
+  //console.log("GET Media searchQuery is: ", searchQuery);
 
   try {
     const response = await axios.get('https://deezerdevs-deezer.p.rapidapi.com/search', {
@@ -195,19 +197,47 @@ app.get('/media-search', async (req: Request, res: Response): Promise<any> => {
         'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com'
       }
     })
-    console.log("Searched Media: ", response.data);
+    //console.log("Searched Media: ", response.data);
     return res.json(response.data); // { data: [data, ..] }
     
   } catch (error) {
-    console.error('Error checking session Backend:', error);
+    //console.error('Error checking session Backend:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-app.post('/search-music', async (req: Request, res: Response): Promise<any> => {
+app.post('/add-music', async (req: Request, res: Response): Promise<void> => {
   console.log("Search Music Route");
+  const { selectedSong } = req.body;
+  console.log("Add-music route. req body: ", selectedSong);
 
-})
+  try {
+    for (const song_ext_id of selectedSong) {
+      const isSongExist = await playlistQueries.getSongByExternalId(song_ext_id);
+
+      if (isSongExist) {
+        console.log('Song already exist with external_id: ', song_ext_id );
+        res.status(400).json({ error: 'Song already exists!' });
+        return;
+      };
+
+      const newPlaylist: Playlist = {
+        song_external_id: song_ext_id,
+        song_like: 0,
+        created_at: new Date(),
+        updated_at: new Date()
+      }; //Playlist types
+
+      const addNewSong = await playlistQueries.addSong(newPlaylist);
+      console.log("New song added: ", addNewSong);
+      res.status(201).json(addNewSong);
+    }
+  } catch(error) {
+    console.log('Error adding a new song: ', error);
+    res.status(500).json( { error: 'Internal Server Error' });
+  };
+
+});
 
 // Health check endpoint
 app.get('/health', (req, res) => {
