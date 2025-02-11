@@ -45,7 +45,7 @@ const SearchMusic = () => {
     }, 200);
   };
 
-  const handleSelectedSong = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelectedSong = (e: React.ChangeEvent<HTMLInputElement>, song: SearchMusicResult) => {
     const isSongSelected = e.target.checked; // => boolean
     //const newSelectedSong = parseInt(e.target.value); //convert ID to number. Checkbox Value attribute has "string" typeOf hence convert.
 
