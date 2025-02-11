@@ -1,6 +1,6 @@
 import db from '../../database';
 import bcrypt from 'bcryptjs';
-import AdminUser from '../../../types/admin/AdminUserTypes';
+import AdminUser from '../../../types/admin/adminUserTypes';
 
 // Get all admin users
 const getAllAdminUsers = async (): Promise<AdminUser[]> => {

@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import SearchMusicResult from '../../../../Backend/src/types/jukeBox/searchMusicResultTypes';
+import { SelectedSong } from '../../../../Backend/src/types/jukeBox/playlistTypes';
 import sortTracksByTitle from '../../utils/musicUtils'
 
 const SearchMusic = () => {
@@ -10,7 +11,8 @@ const SearchMusic = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<SearchMusicResult[]>([]);
   const [clearedResult, setClearedResult] = useState(false);
-  const [selectedSong, setSelectedSong] = useState<number[]>([]); //storage of selected song/s
+  //const [selectedSong, setSelectedSong] = useState<number[]>([]); //storage of selected song/s
+  const [selectedSong, setSelectedSong] = useState<SelectedSong[]>([]);
    
   const handleDashboardNavigation = () => {
     navigate('/dashboard');
@@ -43,17 +45,26 @@ const SearchMusic = () => {
     }, 200);
   };
 
-  const handleSelectedSong = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelectedSong = (e: React.ChangeEvent<HTMLInputElement>, song: SearchMusicResult) => {
     const isSongSelected = e.target.checked; // => boolean
-    const newSelectedSong = parseInt(e.target.value); //convert ID to number. Checkbox Value attribute has "string" typeOf hence convert.
+    //const newSelectedSong = parseInt(e.target.value); //convert ID to number. Checkbox Value attribute has "string" typeOf hence convert.
+    console.log("Is Checkbox checked: ", isSongSelected);
+
+    const newSelectedSong: SelectedSong = {
+      id: song.id,
+      title: song.title,
+    };
+
+    console.log("The newSelectedSong is: ", newSelectedSong);
     
-    isSongSelected ?
-      setSelectedSong( [...selectedSong, newSelectedSong] ) : 
-      setSelectedSong(selectedSong.filter((songId) => songId !== newSelectedSong));
-  
+    if (isSongSelected) {
+      setSelectedSong( [...selectedSong, newSelectedSong] );
+    } else {
+      setSelectedSong(selectedSong.filter((song) => song.id !== newSelectedSong.id));
+    };  
   };
 
-    // Add to jukeBox Playlist
+  // Add to jukeBox Playlist
   const handleAddToPlaylist = async() => {
 
     if (selectedSong.length === 0) {
@@ -69,7 +80,8 @@ const SearchMusic = () => {
 
       setSelectedSong([]); //clear the selected song/s after post
 
-      console.log("Request is now complete: ", response.data);
+      console.log("Request is now complete. We added: ", response.data.addedSongs);
+      console.log("However, we prevent adding an existing song. We skipped: ", response.data.skippedSongs);
 
       if (response.status === 201) {
         setSearchResults([]); // clear the result page when success.
@@ -143,11 +155,14 @@ const SearchMusic = () => {
                     <td>
                       <input 
                         type="checkbox"
-                        id="selectedSong"
+                        id={`selectedSong-${searchResult.id}`}
                         name="selectedSong"
-                        checked={selectedSong.includes(searchResult.id)}
+                        checked={
+                          selectedSong.some((song) => 
+                            song.id === searchResult.id )
+                        }
                         value={searchResult.id}
-                        onChange={handleSelectedSong}/>
+                        onChange={(e) => handleSelectedSong(e, searchResult)}/>
                       ID: {searchResult.id} {/* This is an External ID */}
                     </td>
                   </tr>

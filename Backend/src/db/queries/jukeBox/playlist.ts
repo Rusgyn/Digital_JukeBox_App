@@ -1,10 +1,10 @@
-import Playlist from "../../../types/jukeBox/PlaylistTypes";
 import db from "../../database";
+import { Playlist } from '../../../types/jukeBox/playlistTypes';
 
 // Add song
 const addSong = async (playlist: Playlist): Promise<Playlist> => {
   try {
-    const result = await db.query('INSERT INTO playlists (song_external_id) VALUES ($1) RETURNING *', [playlist.song_external_id]);
+    const result = await db.query('INSERT INTO playlists (song_external_id, title) VALUES ($1, $2) RETURNING *', [playlist.song_external_id, playlist.title]);
     return result.rows[0] as Playlist;
   } catch(error) {
     console.error('Error adding song to the playlist: ', error);
