@@ -64,7 +64,7 @@ const SearchMusic = () => {
     };  
   };
 
-    // Add to jukeBox Playlist
+  // Add to jukeBox Playlist
   const handleAddToPlaylist = async() => {
 
     if (selectedSong.length === 0) {
@@ -80,7 +80,8 @@ const SearchMusic = () => {
 
       setSelectedSong([]); //clear the selected song/s after post
 
-      console.log("Request is now complete: ", response.data);
+      console.log("Request is now complete. We added: ", response.data.addedSongs);
+      console.log("However, we prevent adding an existing song. We skipped: ", response.data.skippedSongs);
 
       if (response.status === 201) {
         setSearchResults([]); // clear the result page when success.
