@@ -54,14 +54,31 @@ const SearchMusic = () => {
   };
 
     // Add to jukeBox Playlist
-  const handleAddToPlaylist = () => {
+  const handleAddToPlaylist = async() => {
+
     if (selectedSong.length === 0) {
       console.log("Please choose a song")
       alert("Select a song/s");
       return;
-    } 
+    };
 
-    console.log("You Click Add to Playlist button. The Selected Songs: ", selectedSong);
+    try {
+      const response = await axios.post('/jukeBox/add-music', {
+        selectedSong
+      });
+
+      setSelectedSong([]); //clear the selected song/s after post
+
+      console.log("Request is now complete");
+      if (response.status === 201) {
+        setSearchResults([]); // clear the result page after post
+        navigate('/media-search');
+      }
+      return response.data;
+    } catch (error: any) {
+      console.error('Error occurred while adding song/s to Playlist: ', error);
+      throw new Error ('An error occurred. Please try again.');
+    }
   };
 
   // Sort the searchResults array by title
