@@ -12,7 +12,7 @@ import adminUserQueries from './db/queries/admin/admin_users';
 import playlistQueries from './db/queries/jukeBox/playlist';
 /* Types */
 import AdminUser from './types/admin/adminUserTypes';
-import { Playlist, SelectedSong } from './types/jukeBox/playlistTypes';
+import { Playlist } from './types/jukeBox/playlistTypes';
 /* Utilities */
 import isUserLoggedIn from './utils/sessionUtils';
 
