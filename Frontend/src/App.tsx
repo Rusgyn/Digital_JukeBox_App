@@ -5,6 +5,7 @@ import Main from './components/Main';
 import AdminRegister from './components/admin_account/AdminRegister'; 
 import SearchMusic from './components/jukebox/SearchMusic';
 import AuthGuard from './auth/AuthGuard';
+import JukeBoxPlaylist from './components/jukebox/JukeBoxPlaylist';
 import './styles/App.scss';
 
 const App = () => {
@@ -21,6 +22,7 @@ const App = () => {
             <Route path="/dashboard" element={ <Dashboard /> } />
             <Route path='/admin-register' element={ <AdminRegister /> } />
             <Route path='/media-search' element={ <SearchMusic /> } />
+            <Route path='/jb-playlist' element={ <JukeBoxPlaylist /> } />
           </Route>
           
         </Routes>
