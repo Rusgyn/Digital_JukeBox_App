@@ -1,35 +1,37 @@
-// utils/songPreview.ts
 import { useState, useRef } from "react";
 
 const useSongPreview = () => {
-  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null);
-  const [playingTrack, setPlayingTrack] = useState<string | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [currentAudio, setCurrentAudio] = useState<HTMLAudioElement | null>(null); // store the currently playing audio
+  const [playingTrack, setPlayingTrack] = useState<string | null>(null); //keeps track of which song preview URL is currently playing. If a song is playing, it stores the preview URL of that song.
+  const audioRef = useRef<HTMLAudioElement | null>(null); // hook avoid re-rendering.
 
-  const handlePlay = (previewUrl: string) => {
-    if (currentAudio && currentAudio.src === previewUrl) {
-      if (currentAudio.paused) {
+  // This handle the play/pause
+  const handlePlay = (songPreviewUrl: string) => {
+    if (currentAudio && currentAudio.src === songPreviewUrl) {
+      if (currentAudio.paused) { // paused is true, audio not playing.
         currentAudio.play();
-        setPlayingTrack(previewUrl);
-      } else {
+        setPlayingTrack(songPreviewUrl);
+      } else { // false, audio is already playing
         currentAudio.pause();
         setPlayingTrack(null);
       }
-      return;
+      return; // stops further execution.
     }
-
-    if (currentAudio) {
+    
+    // ensures only one song play at a time.
+    if (currentAudio) { //True. Checks if there's already an audio playing
       currentAudio.pause();
       currentAudio.currentTime = 0;
     }
 
-    const newAudio = new Audio(previewUrl);
+    // Create new instance. Loads and plays the new song when a different track is selected
+    const newAudio = new Audio(songPreviewUrl); // next songPreviewUrl song
     newAudio.play();
     newAudio.onended = () => setPlayingTrack(null); // Reset when finished
 
-    audioRef.current = newAudio;
-    setCurrentAudio(newAudio);
-    setPlayingTrack(previewUrl);
+    audioRef.current = newAudio; // stores the new object inside userRef, persist without triggering re-render.
+    setCurrentAudio(newAudio); //currentAudio state is now the new instance.
+    setPlayingTrack(songPreviewUrl);
   };
 
   return { handlePlay, playingTrack };
