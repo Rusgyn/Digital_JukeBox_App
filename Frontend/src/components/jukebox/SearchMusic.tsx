@@ -120,6 +120,7 @@ const SearchMusic = () => {
         <button onClick={handleDashboardNavigation}>
           Dashboard
         </button>
+        <button onClick={ handleAddToPlaylist }> Add to JukeBox </button>
         <div>
           <table>
             <thead>
@@ -173,7 +174,7 @@ const SearchMusic = () => {
             </tbody>
           </table>
         </div>
-        <button onClick={ handleAddToPlaylist }> Add to Queue </button>
+        
       </div>
     </div>
   );
