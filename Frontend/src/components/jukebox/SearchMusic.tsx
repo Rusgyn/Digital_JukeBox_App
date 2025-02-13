@@ -173,7 +173,7 @@ const SearchMusic = () => {
             </tbody>
           </table>
         </div>
-        <button onClick={ handleAddToPlaylist }> Add to Playlist </button>
+        <button onClick={ handleAddToPlaylist }> Add to Queue </button>
       </div>
     </div>
   );

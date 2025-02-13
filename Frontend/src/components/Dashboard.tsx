@@ -15,7 +15,11 @@ const Dashboard = () => {
   
   const handleSearchMusicNavigation = () => {
     navigate('/media-search');
-  }
+  };
+
+  const handleJukeBoxPlaylistNavigation = () => {
+    navigate('/jb-playlist');
+  };
 
   const handleAdminLogoutNavigation = async() => {
     try {
@@ -55,8 +59,13 @@ const Dashboard = () => {
         <button
           className="dashboard__content__register_button"
           type='button'
-          value="register"
+          value="search"
           onClick={handleSearchMusicNavigation}>Search Music</button>
+        <button
+          className="dashboard__content__register_button"
+          type='button'
+          value="playlist"
+          onClick={handleJukeBoxPlaylistNavigation}>Playlist</button>
         <button 
           className="dashboard__content__admin-logout_button"
           type='button'

@@ -248,10 +248,67 @@ app.post('/add-music', async (req: Request, res: Response): Promise<void> => {
 
 });
 
+app.get('/jb-playlist', async (req: Request, res: Response): Promise<any> => {
+ 
+  console.log(" === Get All Songs in the Playlist. === ")
+
+  try {
+    // Fetch all songs from database.
+    const jbSongs = await playlistQueries.getAllSongs(); //[{}, {}]
+    console.log("The jukebox Playlist: ", jbSongs);
+
+    // Fetch song details from External API
+    const songDetails = jbSongs.map(async(song) => {
+      //Connect to External API (Deezer)
+      console.log("The song_external_id is: ", song.song_external_id)
+      
+      const response = await axios.get(`https://deezerdevs-deezer.p.rapidapi.com/track/${song.song_external_id}`,
+        {
+          headers: {
+          'x-rapidapi-key':  process.env.PGVITE_DEEZER_API_KEY,
+          'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com'
+          }
+        }
+      );
+
+      const playlistSong = {
+        ...song, // from db (song_external_id, title, likes, created_at, updated_at)
+        artist: response.data.artist.name, // artist name
+        preview: response.data.preview, // song audio preview
+        duration: response.data.duration, // song length
+        album: response.data.album.title, //cover name
+        album_cover_small: response.data.album.cover_small, //cover image
+        album_cover_medium: response.data.album.cover_medium, //cover image
+        album_cover_big: response.data.album.cover_big //cover image
+      }; 
+
+      console.log("Fetch Songs are: ", playlistSong);
+      return playlistSong;
+    });
+  
+    const newSongDetails = await Promise.all(songDetails); // ensure all is completely processed.
+
+    res.json(newSongDetails); //Sending all info both from database and external API.
+
+  } catch (error) {
+    console.error('Backend. Error GET route jukebox playlist: ', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ message: 'Server is running' });
 });
+
+
+// Catch-all error handler
+app.use((err: any, req: Request, res: Response, next: Function) => {
+  console.error(err.stack);
+  res.status(500).send({ error: 'Something went wrong!' });
+});
+
 
 // Static Files for React
 //This tells your server to serve the static files (HTML, CSS, JS) that were built by your React app. These files are typically stored in the dist folder after running a build (npm run build).
@@ -260,12 +317,6 @@ app.use(express.static(path.resolve(__dirname, '../../Frontend/dist')));
 //This is a "catch-all" route for any request that doesn’t match your backend API routes (like /jukeBox). It ensures that React handles the routing for all unknown paths (e.g., /dashboard, /profile).
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../../Frontend/dist/index.html'));
-});
-
-// Catch-all error handler
-app.use((err: any, req: Request, res: Response, next: Function) => {
-  console.error(err.stack);
-  res.status(500).send({ error: 'Something went wrong!' });
 });
 
 // Start the server
