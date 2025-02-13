@@ -15,7 +15,7 @@ const addSong = async (playlist: Playlist): Promise<Playlist> => {
 // Get all songs
 const getAllSongs = async (): Promise<Playlist[]> => {
   try {
-    const result = await db.query('SELECT * FROM playlists ORDER BY likes DESC, created_at ASC;');
+    const result = await db.query('SELECT * FROM playlists ORDER BY created_at ASC, updated_at DESC;');
     return result.rows as Playlist[];
   } catch(error) {
     console.error('Error fetching all songs: ', error);
