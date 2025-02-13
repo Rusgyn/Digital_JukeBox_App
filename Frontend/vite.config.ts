@@ -20,6 +20,10 @@ export default defineConfig({
       '/admin-logout': {
         target: 'http://localhost:3001',
         changeOrigin: true,
+      },
+      '/jb-playlist': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
       }
     },
   },
