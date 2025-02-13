@@ -10,6 +10,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { PlaylistItem } from '../../../../Backend/src/types/jukeBox/playlistTypes';
 import useSongPreview from "../../utils/audioUtils";
+import {formatDuration} from '../../utils/durationUtils';
 import { FaPlay, FaPause } from "react-icons/fa";
 import Switch from 'react-switch';
 
@@ -79,7 +80,7 @@ const JukeBoxPlaylist = () => {
                   </td>
                   <td>{song.title}</td>
                   <td>{song.artist}</td>
-                  <td>{song.duration}</td>
+                  <td>{formatDuration(song.duration)}</td>
                   <td>
                     <label>
                       <Switch
