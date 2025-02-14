@@ -41,10 +41,14 @@ const JukeBoxPlaylist = () => {
     navigate('/');
   };
 
-  const handleLikeSong = (checked: any) => {
+  const handleLikeSong = (checked: boolean) => {
     setIsChecked(checked);
     //alert("You hit the like button!");
   };
+
+  const handleFavoriteSong = () => {
+    console.log("You hit Favorite!");
+  }
 
   return (
     <div>
