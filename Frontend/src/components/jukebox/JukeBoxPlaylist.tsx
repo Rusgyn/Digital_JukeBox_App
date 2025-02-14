@@ -6,13 +6,16 @@
 // column: #, title, artist, cover, like
 
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { PlaylistItem } from '../../../../Backend/src/types/jukeBox/playlistTypes';
-import useSongPreview from "../../utils/audioUtils";
-import {formatDuration} from '../../utils/durationUtils';
 import { FaPlay, FaPause } from "react-icons/fa";
 import Switch from 'react-switch';
+import axios from "axios";
+// Types
+import { PlaylistItem } from '../../../../Backend/src/types/jukeBox/playlistTypes';
+// Utilities
+import useSongPreview from "../../utils/audioUtils";
+import { formatDuration } from '../../utils/durationUtils';
+import { sortTracksByLike } from "../../utils/musicUtils";
 
 const JukeBoxPlaylist = () => {
 
@@ -21,6 +24,7 @@ const JukeBoxPlaylist = () => {
   const [loading, setLoading] = useState(true);
   const [playlist, setPlaylist] = useState<PlaylistItem[] | []>([]);
   const [isChecked, setIsChecked] = useState(false);
+  const [likedSongs, setLikedSongs] = useState<Set<number>>(new Set());
 
   useEffect (() => {
     const fetchPlaylist = async() => {
@@ -46,7 +50,18 @@ const JukeBoxPlaylist = () => {
     //alert("You hit the like button!");
   };
 
-  const handleFavoriteSong = () => {
+  const isSongLiked = (songId: number) => likedSongs.has(songId);
+
+  const handleFavoriteSong = async (id: number) => {
+    try {
+      const isLiked = isSongLiked(id); //Checked if user "liked" the song.
+
+
+    } catch (error) {
+      console.log("Error when attempting to update LIKE");
+    }
+    
+    
     console.log("You hit Favorite!");
   }
 
