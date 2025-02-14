@@ -27,7 +27,7 @@ export interface PlaylistItem {
 };
 
 export interface FavoriteSong {
-  id: number;
-  title: string;
-  song_like: number
+  song_external_id: bigint;
+  song_like: number;
+  updated_at: Date
 };
