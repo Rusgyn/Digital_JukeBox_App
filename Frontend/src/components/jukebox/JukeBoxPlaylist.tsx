@@ -56,6 +56,7 @@ const JukeBoxPlaylist = () => {
     try {
       const isLiked = isSongLiked(id); //Checked if user "liked" the song.
 
+      const response = await axios.get('/jukeBox/')
 
     } catch (error) {
       console.log("Error when attempting to update LIKE");

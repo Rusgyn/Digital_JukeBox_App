@@ -256,6 +256,40 @@ app.get('/jb-playlist', (req, res) => __awaiter(void 0, void 0, void 0, function
         return res.status(500).json({ error: 'Internal server error' });
     }
 }));
+;
+app.patch('/music/:song_external_id/like', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // FYI: TS Generic Argument => (Request<TParams, TResBody, TReqBody>) 
+    const { song_external_id } = req.params; // TParams
+    const { action } = req.body; //TReqBody
+    //Convert string to number. Note: express always consider params as string.
+    const songExtId = BigInt(song_external_id);
+    console.log(`External Id Number: ${songExtId}. Action: ${action}`);
+    try {
+        const updateLike = action === "like" ? 1 : -1; // Update song_like as per action
+        const newFavoriteSong = {
+            song_external_id: songExtId,
+            song_like: updateLike,
+            updated_at: new Date()
+        };
+        const updatedSong = yield playlist_1.default.updateSongLike(newFavoriteSong); // => Playlist[{}]. FYI: return is rows[0]
+        console.log("PATCH LIKE. The updated like is: ", updatedSong);
+        // Fetch the updated song details using external API.
+        const response = yield axios_1.default.get(`https://deezerdevs-deezer.p.rapidapi.com/track/${updatedSong.song_external_id}`, {
+            headers: {
+                'x-rapidapi-key': process.env.PGVITE_DEEZER_API_KEY,
+                'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com'
+            }
+        });
+        const updatedSongWithExtData = Object.assign(Object.assign({}, updatedSong), { artist: response.data.artist.name, preview: response.data.preview, duration: response.data.duration, album: response.data.album.title, album_cover_small: response.data.album.cover_small, album_cover_medium: response.data.album.cover_medium, album_cover_big: response.data.album.cover_big //cover image
+         });
+        console.log("BACKEND PATCH. The updated song with ext data: ", updatedSongWithExtData);
+        return res.json(updatedSongWithExtData);
+    }
+    catch (error) {
+        console.log("BACKEND PATCH. Error updating song_like: ", error);
+        return res.status(500).json({ message: "Internal Server Error" });
+    }
+}));
 // Health check endpoint
 app.get('/health', (req, res) => {
     res.status(200).json({ message: 'Server is running' });
