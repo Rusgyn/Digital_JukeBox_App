@@ -1,5 +1,5 @@
 import db from "../../database";
-import { Playlist, FavoriteSong } from "../../../types/jukeBox/playlistTypes";
+import { Playlist, FavoriteSong } from "../../../types/jukeBox/PlaylistTypes"
 
 // Add song
 const addSong = async (playlist: Playlist): Promise<Playlist> => {
