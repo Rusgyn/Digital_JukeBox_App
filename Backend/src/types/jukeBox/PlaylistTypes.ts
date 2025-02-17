@@ -31,3 +31,7 @@ export interface FavoriteSong {
   song_like: number;
   updated_at: Date
 };
+
+export interface LikedReqBody {
+  action: "like" | "unlike";
+};

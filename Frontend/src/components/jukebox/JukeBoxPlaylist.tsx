@@ -23,8 +23,7 @@ const JukeBoxPlaylist = () => {
   const { handlePlay, playingTrack } = useSongPreview(); // Use the preview function
   const [loading, setLoading] = useState(true);
   const [playlist, setPlaylist] = useState<PlaylistItem[] | []>([]);
-  const [isChecked, setIsChecked] = useState(false);
-  const [likedSongs, setLikedSongs] = useState<Set<number>>(new Set());
+  const [likedSongs, setLikedSongs] = useState<Set<bigint>>(new Set());
 
   useEffect (() => {
     const fetchPlaylist = async() => {
@@ -32,7 +31,9 @@ const JukeBoxPlaylist = () => {
         setLoading(true);
         const response = await axios.get<PlaylistItem[]>('/jb-playlist');
         console.log("The playlist: ", response.data);
-        setPlaylist(response.data);
+
+        const sortedPlaylist = sortTracksByLike(response.data);
+        setPlaylist(sortedPlaylist);
         setLoading(false);
       } catch (error) {
         console.log("Error fetching songs: ", error);
@@ -45,24 +46,32 @@ const JukeBoxPlaylist = () => {
     navigate('/');
   };
 
-  const handleLikeSong = (checked: boolean) => {
-    setIsChecked(checked);
-    //alert("You hit the like button!");
-  };
+  const isSongLiked = (songId: bigint) => likedSongs.has(songId);
 
-  const isSongLiked = (songId: number) => likedSongs.has(songId);
-
-  const handleFavoriteSong = async (id: number) => {
+  const handleFavoriteSong = async (song_external_id: bigint) => {
     try {
-      const isLiked = isSongLiked(id); //Checked if user "liked" the song.
+      const isLiked = isSongLiked(song_external_id); //Checked if user "liked" the song.
 
-      const response = await axios.get('/jukeBox/')
+      const response = await axios.patch(`/music-fav/${song_external_id}/like`, {
+        action: isLiked ? "unlike" : "like"
+      });
+
+      if (response.data) {
+        setLikedSongs(prev => {
+          const newLikedSongs = new Set(prev); // Create a new Set instance
+          if (isLiked) {
+            newLikedSongs.delete(song_external_id);
+          } else {
+            newLikedSongs.add(song_external_id);
+          }
+          return newLikedSongs;
+        });
+      }
 
     } catch (error) {
       console.log("Error when attempting to update LIKE");
     }
-    
-    
+       
     console.log("You hit Favorite!");
   }
 
@@ -104,9 +113,8 @@ const JukeBoxPlaylist = () => {
                   <td>
                     <label>
                       <Switch
-                        checked={isChecked}
-                        value={song.id}
-                        onChange={handleLikeSong}
+                        checked={isSongLiked(song.song_external_id)} //boolean
+                        onChange={() => handleFavoriteSong(song.song_external_id)}
                         />
                     </label>
                   </td>

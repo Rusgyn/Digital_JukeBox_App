@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import SearchMusicResult from '../../../../Backend/src/types/jukeBox/searchMusicResultTypes';
 import { SelectedSong } from '../../../../Backend/src/types/jukeBox/playlistTypes';
-import sortTracksByTitle from '../../utils/musicUtils';
+import { sortTracksByTitle } from '../../utils/musicUtils';
 import useSongPreview from "../../utils/audioUtils";
 import { FaPlay, FaPause } from "react-icons/fa";
 

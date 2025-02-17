@@ -12,7 +12,7 @@ import adminUserQueries from './db/queries/admin/admin_users';
 import playlistQueries from './db/queries/jukeBox/playlist';
 /* Types */
 import AdminUser from './types/admin/adminUserTypes';
-import { Playlist, FavoriteSong } from './types/jukeBox/playlistTypes';
+import { Playlist, FavoriteSong, LikedReqBody } from './types/jukeBox/PlaylistTypes';
 /* Utilities */
 import isUserLoggedIn from './utils/sessionUtils';
 
@@ -188,7 +188,6 @@ app.post('/admin-register', async (req: Request, res: Response): Promise<void> =
 app.get('/media-search', async (req: Request, res: Response): Promise<any> => {
   
   const { searchQuery } = req.query;
-  //console.log("GET Media searchQuery is: ", searchQuery);
 
   try {
     const response = await axios.get('https://deezerdevs-deezer.p.rapidapi.com/search', {
@@ -198,7 +197,7 @@ app.get('/media-search', async (req: Request, res: Response): Promise<any> => {
         'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com'
       }
     })
-    //console.log("Searched Media: ", response.data);
+    
     return res.json(response.data); // { data: [data, ..] }
     
   } catch (error) {
@@ -297,11 +296,7 @@ app.get('/jb-playlist', async (req: Request, res: Response): Promise<any> => {
 
 });
 
-interface LikedReqBody {
-  action: "like" | "unlike";
-};
-
-app.patch('/music/:song_external_id/like', async (req: Request<{ song_external_id: string }, {}, LikedReqBody>, res: Response<any>) : Promise<any> => {
+app.patch('/music-fav/:song_external_id/like', async (req: Request<{ song_external_id: string }, {}, LikedReqBody>, res: Response<any>) : Promise<any> => {
   // FYI: TS Generic Argument => (Request<TParams, TResBody, TReqBody>) 
   const { song_external_id } = req.params; // TParams
   const { action } = req.body; //TReqBody

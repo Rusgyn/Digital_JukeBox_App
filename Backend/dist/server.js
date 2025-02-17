@@ -175,7 +175,6 @@ app.post('/admin-register', (req, res) => __awaiter(void 0, void 0, void 0, func
 //MUSIC API Routes
 app.get('/media-search', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { searchQuery } = req.query;
-    //console.log("GET Media searchQuery is: ", searchQuery);
     try {
         const response = yield axios_1.default.get('https://deezerdevs-deezer.p.rapidapi.com/search', {
             params: { q: searchQuery },
@@ -184,7 +183,6 @@ app.get('/media-search', (req, res) => __awaiter(void 0, void 0, void 0, functio
                 'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com'
             }
         });
-        //console.log("Searched Media: ", response.data);
         return res.json(response.data); // { data: [data, ..] }
     }
     catch (error) {
@@ -256,8 +254,7 @@ app.get('/jb-playlist', (req, res) => __awaiter(void 0, void 0, void 0, function
         return res.status(500).json({ error: 'Internal server error' });
     }
 }));
-;
-app.patch('/music/:song_external_id/like', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.patch('/music-fav/:song_external_id/like', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // FYI: TS Generic Argument => (Request<TParams, TResBody, TReqBody>) 
     const { song_external_id } = req.params; // TParams
     const { action } = req.body; //TReqBody
