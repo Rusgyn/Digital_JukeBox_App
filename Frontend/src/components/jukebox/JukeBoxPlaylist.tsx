@@ -6,13 +6,16 @@
 // column: #, title, artist, cover, like
 
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { PlaylistItem } from '../../../../Backend/src/types/jukeBox/playlistTypes';
-import useSongPreview from "../../utils/audioUtils";
-import {formatDuration} from '../../utils/durationUtils';
 import { FaPlay, FaPause } from "react-icons/fa";
 import Switch from 'react-switch';
+import axios from "axios";
+// Types
+import { PlaylistItem } from '../../../../Backend/src/types/jukeBox/playlistTypes';
+// Utilities
+import useSongPreview from "../../utils/audioUtils";
+import { formatDuration } from '../../utils/durationUtils';
+import { sortTracksByLike } from "../../utils/musicUtils";
 
 const JukeBoxPlaylist = () => {
 
@@ -20,7 +23,7 @@ const JukeBoxPlaylist = () => {
   const { handlePlay, playingTrack } = useSongPreview(); // Use the preview function
   const [loading, setLoading] = useState(true);
   const [playlist, setPlaylist] = useState<PlaylistItem[] | []>([]);
-  const [isChecked, setIsChecked] = useState(false);
+  const [likedSongs, setLikedSongs] = useState<Set<bigint>>(new Set());
 
   useEffect (() => {
     const fetchPlaylist = async() => {
@@ -28,7 +31,9 @@ const JukeBoxPlaylist = () => {
         setLoading(true);
         const response = await axios.get<PlaylistItem[]>('/jb-playlist');
         console.log("The playlist: ", response.data);
-        setPlaylist(response.data);
+
+        const sortedPlaylist = sortTracksByLike(response.data);
+        setPlaylist(sortedPlaylist);
         setLoading(false);
       } catch (error) {
         console.log("Error fetching songs: ", error);
@@ -41,10 +46,34 @@ const JukeBoxPlaylist = () => {
     navigate('/');
   };
 
-  const handleLikeSong = (checked: any) => {
-    setIsChecked(checked);
-    //alert("You hit the like button!");
-  };
+  const isSongLiked = (songId: bigint) => likedSongs.has(songId);
+
+  const handleFavoriteSong = async (song_external_id: bigint) => {
+    try {
+      const isLiked = isSongLiked(song_external_id); //Checked if user "liked" the song.
+
+      const response = await axios.patch(`/music-fav/${song_external_id}/like`, {
+        action: isLiked ? "unlike" : "like"
+      });
+
+      if (response.data) {
+        setLikedSongs(prev => {
+          const newLikedSongs = new Set(prev); // Create a new Set instance
+          if (isLiked) {
+            newLikedSongs.delete(song_external_id);
+          } else {
+            newLikedSongs.add(song_external_id);
+          }
+          return newLikedSongs;
+        });
+      }
+
+    } catch (error) {
+      console.log("Error when attempting to update LIKE");
+    }
+       
+    console.log("You hit Favorite!");
+  }
 
   return (
     <div>
@@ -84,9 +113,8 @@ const JukeBoxPlaylist = () => {
                   <td>
                     <label>
                       <Switch
-                        checked={isChecked}
-                        value={song.id}
-                        onChange={handleLikeSong}
+                        checked={isSongLiked(song.song_external_id)} //boolean
+                        onChange={() => handleFavoriteSong(song.song_external_id)}
                         />
                     </label>
                   </td>

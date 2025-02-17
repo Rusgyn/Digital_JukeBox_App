@@ -12,7 +12,7 @@ import adminUserQueries from './db/queries/admin/admin_users';
 import playlistQueries from './db/queries/jukeBox/playlist';
 /* Types */
 import AdminUser from './types/admin/adminUserTypes';
-import { Playlist } from './types/jukeBox/playlistTypes';
+import { Playlist, FavoriteSong, LikedReqBody } from './types/jukeBox/PlaylistTypes';
 /* Utilities */
 import isUserLoggedIn from './utils/sessionUtils';
 
@@ -188,7 +188,6 @@ app.post('/admin-register', async (req: Request, res: Response): Promise<void> =
 app.get('/media-search', async (req: Request, res: Response): Promise<any> => {
   
   const { searchQuery } = req.query;
-  //console.log("GET Media searchQuery is: ", searchQuery);
 
   try {
     const response = await axios.get('https://deezerdevs-deezer.p.rapidapi.com/search', {
@@ -198,7 +197,7 @@ app.get('/media-search', async (req: Request, res: Response): Promise<any> => {
         'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com'
       }
     })
-    //console.log("Searched Media: ", response.data);
+    
     return res.json(response.data); // { data: [data, ..] }
     
   } catch (error) {
@@ -295,6 +294,58 @@ app.get('/jb-playlist', async (req: Request, res: Response): Promise<any> => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 
+});
+
+app.patch('/music-fav/:song_external_id/like', async (req: Request<{ song_external_id: string }, {}, LikedReqBody>, res: Response<any>) : Promise<any> => {
+  // FYI: TS Generic Argument => (Request<TParams, TResBody, TReqBody>) 
+  const { song_external_id } = req.params; // TParams
+  const { action } = req.body; //TReqBody
+  
+  //Convert string to number. Note: express always consider params as string.
+  const songExtId = BigInt(song_external_id);
+  console.log(`External Id Number: ${songExtId}. Action: ${action}`);
+
+  try {
+    const updateLike = action === "like" ? 1 : -1; // Update song_like as per action
+
+    const newFavoriteSong: FavoriteSong = {
+      song_external_id: songExtId,
+      song_like: updateLike,
+      updated_at: new Date()
+    }
+
+    const updatedSong = await playlistQueries.updateSongLike(newFavoriteSong); // => Playlist[{}]. FYI: return is rows[0]
+
+    console.log("PATCH LIKE. The updated like is: ", updatedSong);
+
+    // Fetch the updated song details using external API.
+    const response = await axios.get(`https://deezerdevs-deezer.p.rapidapi.com/track/${updatedSong.song_external_id}`,
+      {
+        headers: {
+        'x-rapidapi-key':  process.env.PGVITE_DEEZER_API_KEY,
+        'x-rapidapi-host': 'deezerdevs-deezer.p.rapidapi.com'
+        }
+      }
+    );
+
+    const updatedSongWithExtData = {
+      ...updatedSong, // from db (song_external_id, title, song_like, created_at, updated_at)
+      artist: response.data.artist.name, // artist name
+      preview: response.data.preview, // song audio preview
+      duration: response.data.duration, // song length
+      album: response.data.album.title, //cover name
+      album_cover_small: response.data.album.cover_small, //cover image
+      album_cover_medium: response.data.album.cover_medium, //cover image
+      album_cover_big: response.data.album.cover_big //cover image
+    };
+
+    console.log("BACKEND PATCH. The updated song with ext data: ", updatedSongWithExtData);
+
+    return res.json(updatedSongWithExtData);
+  } catch(error) {
+    console.log("BACKEND PATCH. Error updating song_like: ", error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 // Health check endpoint

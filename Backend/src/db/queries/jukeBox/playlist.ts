@@ -1,5 +1,5 @@
 import db from "../../database";
-import { Playlist } from "../../../types/jukeBox/playlistTypes";
+import { Playlist, FavoriteSong } from "../../../types/jukeBox/PlaylistTypes"
 
 // Add song
 const addSong = async (playlist: Playlist): Promise<Playlist> => {
@@ -35,10 +35,10 @@ const getSongByExternalId = async (song_ext_id: number): Promise<Playlist> => {
 }
 
 // Update number of likes
-const updateSongLike = async (playlist: Playlist): Promise<Playlist> => {
+const updateSongLike = async (playlist: FavoriteSong): Promise<FavoriteSong> => {
   try {
-    const queryString = 'UPDATE playlists SET song_like= $1 WHERE id = $2 RETURNING *;';
-    const result = await db.query(queryString, [playlist.song_like, playlist.id]);
+    const queryString = 'UPDATE playlists SET song_like= song_like + $1, updated_at=NOW() WHERE song_external_id = $2 RETURNING *;';
+    const result = await db.query(queryString, [playlist.song_like, playlist.song_external_id]);
     return result.rows[0] as Playlist;
   } catch(error) {
     console.error('Error updating number of song likes: ', error);
