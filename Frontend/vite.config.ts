@@ -24,7 +24,11 @@ export default defineConfig({
       '/jb-playlist': {
         target: 'http://localhost:3001',
         changeOrigin: true,
-      }
+      },
+      '/music-fav': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
     },
   },
 });
