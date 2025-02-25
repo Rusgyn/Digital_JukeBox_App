@@ -4,6 +4,7 @@ import '../styles/Dashboard.scss';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  console.log('F/E - YOU ARE IN DASHBOARD');
 
   const handleMainNavigation = () => {
     navigate('/');
