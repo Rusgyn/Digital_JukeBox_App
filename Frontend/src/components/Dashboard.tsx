@@ -4,7 +4,7 @@ import '../styles/Dashboard.scss';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-
+  
   const handleMainNavigation = () => {
     navigate('/');
   };
