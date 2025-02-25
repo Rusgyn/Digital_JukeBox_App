@@ -258,6 +258,9 @@ app.patch('/music-fav/:song_external_id/like', (req, res) => __awaiter(void 0, v
     // FYI: TS Generic Argument => (Request<TParams, TResBody, TReqBody>) 
     const { song_external_id } = req.params; // TParams
     const { action } = req.body; //TReqBody
+    const loggedInUser = req.session.loggedAdminUser;
+    console.log("The loggedAdminUser is: ", loggedInUser);
+    console.log("The loggedAdminUser ID is: ", loggedInUser === null || loggedInUser === void 0 ? void 0 : loggedInUser.id);
     //Convert string to number. Note: express always consider params as string.
     const songExtId = BigInt(song_external_id);
     console.log(`External Id Number: ${songExtId}. Action: ${action}`);

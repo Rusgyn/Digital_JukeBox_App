@@ -301,6 +301,10 @@ app.patch('/music-fav/:song_external_id/like', async (req: Request<{ song_extern
   const { song_external_id } = req.params; // TParams
   const { action } = req.body; //TReqBody
   
+  const loggedInUser = req.session.loggedAdminUser;
+  console.log("The loggedAdminUser is: ", loggedInUser);
+  console.log("The loggedAdminUser ID is: ", loggedInUser?.id);
+  
   //Convert string to number. Note: express always consider params as string.
   const songExtId = BigInt(song_external_id);
   console.log(`External Id Number: ${songExtId}. Action: ${action}`);
