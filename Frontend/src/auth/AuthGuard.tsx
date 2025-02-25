@@ -26,11 +26,11 @@ const AuthGuard = () => { // if export const AuthGuard, => import { AuthGuard}
   if (isLoading) {
     console.log('Auth Guard is loading...');
     return null; // This prevent rendering anything until session check completes
-  } else {
-    console.log('Auth Guard is done...');
-    return isAuthenticated ? <Outlet /> : <Navigate to="/admin-login" replace />; // <Outlet /> = react built in component, placeholder for pages that match a route.
   }
   
+  console.log('Auth Guard is done...');
+  return isAuthenticated ? <Outlet /> : <Navigate to="/admin-login" replace />; // <Outlet /> = react built in component, placeholder for pages that match a route.
+
 };
 
 export default AuthGuard; // => import AuthGuard
